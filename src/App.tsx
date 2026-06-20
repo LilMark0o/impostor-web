@@ -7,7 +7,8 @@ import { DifficultyToggle } from './components/DifficultyToggle';
 import { ConfigDrawer } from './components/ConfigDrawer';
 import { Tutorial } from './components/Tutorial';
 import { GameResult } from './components/GameResult';
-import { Button } from './components/ui/Button';
+import { Button } from './components/ui/Button'
+import AuthButton from './components/AuthButton';
 
 export default function App() {
   const [mode, setMode] = useState<Mode>('caos');
@@ -35,17 +36,20 @@ export default function App() {
             <h1 className="text-white font-extrabold text-xl leading-tight">🎭 El Impostor</h1>
             <p className="text-gray-500 text-xs">¿Quién está mintiendo?</p>
           </div>
-          <button
-            onClick={() => setConfigOpen(true)}
-            className="relative flex items-center gap-2 bg-[#1A1A1F] border border-[#2A2A35] rounded-xl px-3 py-2 text-gray-400 hover:text-white hover:border-violet-500/50 transition-all"
-          >
-            <span className="text-lg">⚙️</span>
-            {players.length > 0 && (
-              <span className="absolute -top-1.5 -right-1.5 bg-violet-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">
-                {players.length}
-              </span>
-            )}
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setConfigOpen(true)}
+              className="relative flex items-center gap-2 bg-[#1A1A1F] border border-[#2A2A35] rounded-xl px-3 py-2 text-gray-400 hover:text-white hover:border-violet-500/50 transition-all"
+            >
+              <span className="text-lg">⚙️</span>
+              {players.length > 0 && (
+                <span className="absolute -top-1.5 -right-1.5 bg-violet-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">
+                  {players.length}
+                </span>
+              )}
+            </button>
+            <AuthButton />
+          </div>
         </div>
       </header>
 
