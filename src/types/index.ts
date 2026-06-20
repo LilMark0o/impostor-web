@@ -14,3 +14,10 @@ export interface GameResult {
   sent: string[];
   failed: string[];
 }
+
+export interface AuthUser {
+  id: string
+  email: string
+  name: string
+  lang: string
+}
