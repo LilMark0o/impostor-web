@@ -15,14 +15,27 @@ interface AuthContextValue {
 
 export const AuthContext = createContext<AuthContextValue | null>(null)
 
+interface GoogleOAuth2 {
+  initCodeClient(opts: {
+    client_id: string
+    scope: string
+    callback: (response: { code?: string; error?: string }) => void
+  }): { requestCode(): void }
+}
+
+declare global {
+  interface Window {
+    google?: { accounts?: { oauth2?: GoogleOAuth2 } }
+  }
+}
+
 function requestGoogleCode(): Promise<string> {
   return new Promise((resolve, reject) => {
-    const w = window as any
-    if (!w.google?.accounts?.oauth2) {
+    if (!window.google?.accounts?.oauth2) {
       reject(new Error("Google Identity Services not loaded"))
       return
     }
-    w.google.accounts.oauth2
+    window.google.accounts.oauth2
       .initCodeClient({
         client_id: GOOGLE_CLIENT_ID,
         scope: "email profile",
