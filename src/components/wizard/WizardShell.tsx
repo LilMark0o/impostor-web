@@ -4,6 +4,7 @@ import { usePlayers } from '@/hooks/usePlayers';
 import { useGame } from '@/hooks/useGame';
 import { useAuth } from '@/contexts/AuthContext';
 import { StepPlayers } from './StepPlayers';
+import { StepMode } from './StepMode';
 import { StepReview } from './StepReview';
 import { GameInProgress } from '@/components/GameInProgress';
 import type { Mode, Difficulty } from '@/types';
@@ -129,33 +130,14 @@ export function WizardShell() {
             />
           )}
           {step === 2 && (
-            <div className="text-stone-600">
-              {/* StepMode placeholder — will be replaced in FE Task 5 */}
-              <p className="text-sm">Modo: {mode}</p>
-              <p className="text-sm">Dificultad: {difficulty}</p>
-              <div className="mt-2 flex gap-2">
-                <button type="button" onClick={() => setMode('caos')} className="text-xs text-stone-400 underline">caos</button>
-                <button type="button" onClick={() => setMode('espejo')} className="text-xs text-stone-400 underline">espejo</button>
-                <button type="button" onClick={() => setDifficulty('facil')} className="text-xs text-stone-400 underline">fácil</button>
-                <button type="button" onClick={() => setDifficulty('dificil')} className="text-xs text-stone-400 underline">difícil</button>
-              </div>
-              <div className="mt-4 flex gap-2">
-                <button
-                  type="button"
-                  onClick={goToStep1}
-                  className="rounded-lg border border-stone-200 px-3 py-1.5 text-sm text-stone-600 hover:bg-stone-50"
-                >
-                  Atrás
-                </button>
-                <button
-                  type="button"
-                  onClick={goToStep3}
-                  className="rounded-lg bg-amber-600 px-3 py-1.5 text-sm text-white hover:bg-amber-700"
-                >
-                  Siguiente
-                </button>
-              </div>
-            </div>
+            <StepMode
+              mode={mode}
+              setMode={setMode}
+              difficulty={difficulty}
+              setDifficulty={setDifficulty}
+              onBack={goToStep1}
+              onNext={goToStep3}
+            />
           )}
           {step === 3 && (
             <StepReview
