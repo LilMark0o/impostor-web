@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { Hand, CheckCircle2, AlertTriangle } from 'lucide-react'
 import { useReveal } from '../hooks/useReveal'
@@ -19,12 +19,11 @@ export default function RevealPage() {
   }, [data?.session_id])
 
   // Persist reveal state to localStorage
-  const handleReveal = () => {
-    if (data?.session_id) {
-      localStorage.setItem(`reveal_${data.session_id}`, 'true')
-    }
+  const handleReveal = useCallback(() => {
+    if (!data?.session_id) return
+    localStorage.setItem(`reveal_${data.session_id}`, 'true')
     setRevealed(true)
-  }
+  }, [data?.session_id])
 
   // Error: early return so errors after data is set are never swallowed
   if (error) {
@@ -50,14 +49,15 @@ export default function RevealPage() {
   // State 2: Ready — tap to reveal
   if (data?.state === 'ready' && !revealed) {
     return (
-      <div
-        className="min-h-screen bg-stone-900 text-white flex flex-col items-center justify-center gap-4 cursor-pointer select-none"
+      <button
+        type="button"
+        className="w-full min-h-screen bg-stone-900 flex flex-col items-center justify-center gap-4 text-white select-none border-none outline-none"
         onClick={handleReveal}
       >
         <Hand size={48} className="text-amber-400" />
         <h1 className="text-white text-2xl font-semibold">Toca para ver tu rol</h1>
         <p className="text-stone-400">Hola, {data.player_name}</p>
-      </div>
+      </button>
     )
   }
 
