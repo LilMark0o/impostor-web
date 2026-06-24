@@ -33,7 +33,9 @@ export function usePlayers() {
     if (local.length === 0) return
 
     const remoteIds = players.map((p) => p.telegram_id)
-    const toMerge = local.filter((p) => !remoteIds.includes(p.telegram_id))
+    const toMerge = local.filter(
+      (p) => p.telegram_id != null && !remoteIds.includes(p.telegram_id),
+    )
     Promise.all(toMerge.map((p) => createPlayer(token, { name: p.name, telegram_id: p.telegram_id })))
       .then((created) => setPlayers((prev) => [...prev, ...created]))
       .catch(() => {})
@@ -45,7 +47,7 @@ export function usePlayers() {
       const player = await createPlayer(token, { name, telegram_id })
       setPlayers((prev) => [...prev, player])
     } else {
-      const player: Player = { id: crypto.randomUUID(), name, telegram_id }
+      const player: Player = { id: crypto.randomUUID(), name, telegram_id, token: '' }
       const updated = [...players, player]
       setPlayers(updated)
       localStorage.setItem(LS_KEY, JSON.stringify(updated))

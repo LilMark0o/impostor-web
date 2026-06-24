@@ -1,9 +1,9 @@
-import type { GameResult as GameResultType } from '../types';
+import type { StartGameResponse } from '../types';
 import { Button } from './ui/Button';
 import { Badge } from './ui/Badge';
 
 interface GameResultProps {
-  result: GameResultType;
+  result: StartGameResponse;
   onPlayAgain: () => void;
 }
 

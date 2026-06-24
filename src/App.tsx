@@ -2,6 +2,7 @@ import { useState } from 'react';
 import type { Mode, Difficulty } from './types';
 import { usePlayers } from './hooks/usePlayers';
 import { useGame } from './hooks/useGame';
+import { useAuth } from './contexts/AuthContext';
 import { ModeCard } from './components/ModeCard';
 import { DifficultyToggle } from './components/DifficultyToggle';
 import { ConfigDrawer } from './components/ConfigDrawer';
@@ -16,15 +17,24 @@ export default function App() {
   const [configOpen, setConfigOpen] = useState(false);
   const [tutorialOpen, setTutorialOpen] = useState(false);
 
+  const { token } = useAuth();
   const { players, addPlayer, removePlayer } = usePlayers();
   const { state, result, error, start, reset } = useGame();
 
   function handleStart() {
-    start({
-      players: players.map((p) => ({ name: p.name, telegram_id: p.telegram_id })),
-      mode,
-      difficulty,
-    });
+    start(
+      {
+        players: players.map((p) => ({
+          id: p.id,
+          name: p.name,
+          telegram_id: p.telegram_id,
+          token: p.token,
+        })),
+        mode,
+        difficulty,
+      },
+      token ?? '',
+    );
   }
 
   return (
