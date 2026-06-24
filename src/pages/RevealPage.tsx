@@ -26,20 +26,23 @@ export default function RevealPage() {
     setRevealed(true)
   }
 
+  // Error: early return so errors after data is set are never swallowed
+  if (error) {
+    return (
+      <div className="min-h-screen bg-stone-50 flex flex-col items-center justify-center gap-4">
+        <p className="text-red-500 text-center px-4">{error}</p>
+      </div>
+    )
+  }
+
   // State 1: Loading / Waiting
   if (isLoading || data?.state === 'waiting') {
     return (
       <div className="min-h-screen bg-stone-50 flex flex-col items-center justify-center gap-3">
-        {error ? (
-          <p className="text-red-500">{error}</p>
-        ) : (
-          <>
-            <div className="bg-amber-500 rounded-full animate-pulse w-3 h-3" />
-            <h1 className="text-stone-900 text-2xl font-semibold">Esperando partida</h1>
-            <p className="text-stone-500">Hola, {data?.player_name ?? 'jugador'}</p>
-            <p className="text-stone-400 text-sm">Esta pantalla se actualiza sola</p>
-          </>
-        )}
+        <div className="bg-amber-500 rounded-full animate-pulse w-3 h-3" />
+        <h1 className="text-stone-900 text-2xl font-semibold">Esperando partida</h1>
+        <p className="text-stone-500">Hola, {data?.player_name ?? 'jugador'}</p>
+        <p className="text-stone-400 text-sm">Esta pantalla se actualiza sola</p>
       </div>
     )
   }
@@ -72,11 +75,13 @@ export default function RevealPage() {
   }
 
   // State 3a: Revealed — NOT impostor
+  if (!data) return null // should not happen, but guards the fall-through
+
   return (
     <div className="min-h-screen bg-stone-50 flex flex-col items-center justify-center gap-3">
       <CheckCircle2 size={56} className="text-green-500" />
       <h1 className="text-stone-900 text-2xl font-semibold">No eres el Impostor</h1>
-      <p className="text-stone-900 text-4xl font-bold mt-2">{data?.category}</p>
+      <p className="text-stone-900 text-4xl font-bold mt-2">{data.category}</p>
       <p className="text-stone-400 text-sm">No muestres esta pantalla a otros jugadores</p>
     </div>
   )
