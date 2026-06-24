@@ -1,3 +1,4 @@
+import type { ElementType } from 'react';
 import { Shield, Layers, EyeOff, Users, Shuffle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import type { Mode, Difficulty } from '@/types';
@@ -14,7 +15,7 @@ interface StepModeProps {
 interface ModeCard {
   key: Mode;
   label: string;
-  icon: React.ElementType;
+  icon: ElementType;
   description: string;
 }
 
