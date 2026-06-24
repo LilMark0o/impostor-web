@@ -36,7 +36,7 @@ export function QrCard({ name, token, origin }: QrCardProps) {
           </button>
         </>
       ) : (
-        <p className="text-xs text-stone-400 text-center">Sin link — jugador sin cuenta</p>
+        <p className="text-xs text-stone-400 text-center">Sin link</p>
       )}
     </div>
   );

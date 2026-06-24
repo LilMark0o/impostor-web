@@ -1,4 +1,4 @@
-import type { StartGameResponse } from '@/types';
+import type { StartGameResponse, Difficulty } from '@/types';
 import { QrCard } from './QrCard';
 
 const MODE_LABELS: Record<string, string> = {
@@ -17,10 +17,11 @@ const DIFFICULTY_LABELS: Record<string, string> = {
 
 interface GameInProgressProps {
   result: StartGameResponse;
+  difficulty: Difficulty;
   onNewRound: () => void;
 }
 
-export function GameInProgress({ result, onNewRound }: GameInProgressProps) {
+export function GameInProgress({ result, difficulty, onNewRound }: GameInProgressProps) {
   const origin = window.location.origin;
 
   const shareAllLinks = async () => {
@@ -33,8 +34,8 @@ export function GameInProgress({ result, onNewRound }: GameInProgressProps) {
 
   const hasFailed = result.failed.length > 0;
   const modeLabel = MODE_LABELS[result.mode] ?? result.mode;
+  const difficultyLabel = DIFFICULTY_LABELS[difficulty] ?? difficulty;
 
-  // StartGameResponse doesn't include difficulty directly, so we show what we have
   return (
     <div className="flex flex-col gap-5">
       {/* Header */}
@@ -47,7 +48,7 @@ export function GameInProgress({ result, onNewRound }: GameInProgressProps) {
 
       {/* Metadata */}
       <p className="text-sm text-stone-500">
-        Modo {modeLabel} · Categoría: {result.category}
+        Modo {modeLabel} · {difficultyLabel} · Categoría: {result.category}
       </p>
 
       {/* QR grid */}

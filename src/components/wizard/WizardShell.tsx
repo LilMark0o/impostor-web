@@ -19,8 +19,8 @@ const stepKeys: Step[] = [1, 2, 3];
 
 export function WizardShell() {
   const [step, setStep] = useState<Step>(1);
-  const [mode, setMode] = useState<Mode>('caos');
-  const [difficulty, setDifficulty] = useState<Difficulty>('dificil');
+  const [mode, _setMode] = useState<Mode>('caos');
+  const [difficulty, _setDifficulty] = useState<Difficulty>('dificil');
 
   const { players, addPlayer, removePlayer } = usePlayers();
   const { state, result, start } = useGame();
@@ -57,6 +57,7 @@ export function WizardShell() {
         <div className="w-full max-w-2xl">
           <GameInProgress
             result={result}
+            difficulty={difficulty}
             onNewRound={goToStep1}
           />
         </div>

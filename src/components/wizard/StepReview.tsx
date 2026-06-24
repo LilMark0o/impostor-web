@@ -1,4 +1,4 @@
-import { Users, Target, UserX, Loader2 } from 'lucide-react';
+import { Shield, Layers, EyeOff, Users, Shuffle, Target, UserX, Loader2, type LucideIcon } from 'lucide-react';
 import type { Mode, Difficulty, Player } from '@/types';
 
 const MODE_LABELS: Record<Mode, string> = {
@@ -15,20 +15,13 @@ const DIFFICULTY_LABELS: Record<Difficulty, string> = {
   brutal: 'Brutal',
 };
 
-function getModeIcon(mode: Mode) {
-  switch (mode) {
-    case 'clasico':
-      return <span className="text-stone-500">🎭</span>;
-    case 'caos':
-      return <span className="text-stone-500">💥</span>;
-    case 'ciego':
-      return <span className="text-stone-500">🙈</span>;
-    case 'aliados':
-      return <span className="text-stone-500">🤝</span>;
-    case 'espejo':
-      return <span className="text-stone-500">🪞</span>;
-  }
-}
+const MODE_ICONS: Record<Mode, LucideIcon> = {
+  clasico: Shield,
+  caos: Layers,
+  ciego: EyeOff,
+  aliados: Users,
+  espejo: Shuffle,
+};
 
 function computeImpostors(playerCount: number, mode: Mode): string {
   if (mode === 'aliados') return '2 (cómplices)';
@@ -55,6 +48,7 @@ export function StepReview({
   onStart,
 }: StepReviewProps) {
   const impostorCount = computeImpostors(players.length, mode);
+  const ModeIcon = MODE_ICONS[mode];
 
   return (
     <div className="flex flex-col gap-5">
@@ -75,9 +69,7 @@ export function StepReview({
 
         {/* Mode row */}
         <div className="flex items-center gap-3 py-2">
-          <span className="size-4 flex items-center justify-center shrink-0">
-            {getModeIcon(mode)}
-          </span>
+          <ModeIcon size={16} className="text-stone-500 shrink-0" />
           <span className="text-sm text-stone-500 flex-1">Modo</span>
           <span className="text-sm font-semibold text-stone-900">{MODE_LABELS[mode]}</span>
         </div>
