@@ -52,6 +52,8 @@ export function WizardShell() {
   const goToStep2 = useCallback(() => setStep(2), []);
   const goToStep3 = useCallback(() => setStep(3), []);
 
+  const { user, login, logout } = useAuth();
+
   if (result) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-stone-50 p-4">
@@ -65,8 +67,6 @@ export function WizardShell() {
       </div>
     );
   }
-
-  const { user, login, logout } = useAuth();
 
   return (
     <div className="flex min-h-screen flex-col items-center bg-stone-50 p-4">
