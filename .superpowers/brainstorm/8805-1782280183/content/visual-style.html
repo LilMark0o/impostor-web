@@ -1,0 +1,140 @@
+<h2>¿Cuál dirección visual?</h2>
+<p class="subtitle">Todas son light mode, sin emojis, con iconos SVG. Elige la que se siente más "tu app".</p>
+
+<div class="cards">
+
+  <!-- Option A: Clean Minimal / Swiss -->
+  <div class="card" data-choice="a" onclick="toggleSelect(this)">
+    <div class="card-image" style="background:#f8fafc; padding:18px; border-radius:8px; font-family:'Inter',system-ui,sans-serif; border:1px solid #e2e8f0;">
+
+      <!-- Header -->
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+        <span style="color:#0f172a; font-weight:700; font-size:13px; letter-spacing:-0.3px;">El Impostor</span>
+        <svg width="16" height="16" fill="none" stroke="#64748b" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+      </div>
+
+      <!-- Step dots -->
+      <div style="display:flex; gap:4px; margin-bottom:14px;">
+        <div style="width:20px; height:3px; border-radius:2px; background:#0f172a;"></div>
+        <div style="width:20px; height:3px; border-radius:2px; background:#cbd5e1;"></div>
+        <div style="width:20px; height:3px; border-radius:2px; background:#cbd5e1;"></div>
+      </div>
+
+      <div style="color:#0f172a; font-size:12px; font-weight:600; margin-bottom:3px;">Jugadores</div>
+      <div style="color:#64748b; font-size:10px; margin-bottom:10px;">¿Quién va a jugar esta ronda?</div>
+
+      <!-- Players -->
+      <div style="display:flex; flex-direction:column; gap:4px; margin-bottom:10px;">
+        <div style="background:#fff; border:1px solid #e2e8f0; border-radius:6px; padding:6px 10px; display:flex; justify-content:space-between; align-items:center;">
+          <span style="font-size:10px; color:#0f172a; font-weight:500;">Marco</span>
+          <svg width="12" height="12" fill="none" stroke="#94a3b8" stroke-width="2" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </div>
+        <div style="background:#fff; border:1px solid #e2e8f0; border-radius:6px; padding:6px 10px; display:flex; justify-content:space-between; align-items:center;">
+          <span style="font-size:10px; color:#0f172a; font-weight:500;">Camila</span>
+          <svg width="12" height="12" fill="none" stroke="#94a3b8" stroke-width="2" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </div>
+        <div style="background:#f1f5f9; border:1px dashed #cbd5e1; border-radius:6px; padding:6px 10px; color:#94a3b8; font-size:10px; display:flex; align-items:center; gap:4px;">
+          <svg width="11" height="11" fill="none" stroke="#94a3b8" stroke-width="2" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+          Añadir jugador
+        </div>
+      </div>
+
+      <div style="background:#0f172a; border-radius:6px; padding:7px; text-align:center; color:#fff; font-size:10px; font-weight:600; letter-spacing:0.5px;">CONTINUAR</div>
+    </div>
+    <div class="card-body">
+      <h3>A — Slate / Minimal</h3>
+      <p>Blanco puro, grises slate, negro para texto y CTAs. Sin color de acento. Muy limpio, casi editorial. Podría sentirse muy frío para un juego.</p>
+    </div>
+  </div>
+
+  <!-- Option B: Warm / Premium -->
+  <div class="card" data-choice="b" onclick="toggleSelect(this)">
+    <div class="card-image" style="background:#fafaf7; padding:18px; border-radius:8px; font-family:'Inter',system-ui,sans-serif; border:1px solid #e7e5e0;">
+
+      <!-- Header -->
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+        <span style="color:#1c1917; font-weight:700; font-size:13px; letter-spacing:-0.3px;">El Impostor</span>
+        <svg width="16" height="16" fill="none" stroke="#78716c" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+      </div>
+
+      <!-- Step dots -->
+      <div style="display:flex; gap:4px; margin-bottom:14px;">
+        <div style="width:20px; height:3px; border-radius:2px; background:#d97706;"></div>
+        <div style="width:20px; height:3px; border-radius:2px; background:#e7e5e0;"></div>
+        <div style="width:20px; height:3px; border-radius:2px; background:#e7e5e0;"></div>
+      </div>
+
+      <div style="color:#1c1917; font-size:12px; font-weight:600; margin-bottom:3px;">Jugadores</div>
+      <div style="color:#78716c; font-size:10px; margin-bottom:10px;">¿Quién va a jugar esta ronda?</div>
+
+      <!-- Players -->
+      <div style="display:flex; flex-direction:column; gap:4px; margin-bottom:10px;">
+        <div style="background:#fff; border:1px solid #e7e5e0; border-radius:6px; padding:6px 10px; display:flex; justify-content:space-between; align-items:center;">
+          <span style="font-size:10px; color:#1c1917; font-weight:500;">Marco</span>
+          <svg width="12" height="12" fill="none" stroke="#a8a29e" stroke-width="2" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </div>
+        <div style="background:#fff; border:1px solid #e7e5e0; border-radius:6px; padding:6px 10px; display:flex; justify-content:space-between; align-items:center;">
+          <span style="font-size:10px; color:#1c1917; font-weight:500;">Camila</span>
+          <svg width="12" height="12" fill="none" stroke="#a8a29e" stroke-width="2" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </div>
+        <div style="background:#fef9ee; border:1px dashed #d97706; border-radius:6px; padding:6px 10px; color:#b45309; font-size:10px; display:flex; align-items:center; gap:4px;">
+          <svg width="11" height="11" fill="none" stroke="#b45309" stroke-width="2" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+          Añadir jugador
+        </div>
+      </div>
+
+      <div style="background:#d97706; border-radius:6px; padding:7px; text-align:center; color:#fff; font-size:10px; font-weight:600; letter-spacing:0.5px;">CONTINUAR</div>
+    </div>
+    <div class="card-body">
+      <h3>B — Warm Stone / Amber</h3>
+      <p>Fondo crema, stone-900 para texto, acento ámbar. Cálido, premium, se siente handcrafted. Buena energía para un juego social de mesa.</p>
+    </div>
+  </div>
+
+  <!-- Option C: Clean Modern / Indigo subtle -->
+  <div class="card" data-choice="c" onclick="toggleSelect(this)">
+    <div class="card-image" style="background:#f5f5f6; padding:18px; border-radius:8px; font-family:'Inter',system-ui,sans-serif; border:1px solid #e4e4e7;">
+
+      <!-- Header -->
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+        <span style="color:#18181b; font-weight:700; font-size:13px; letter-spacing:-0.3px;">El Impostor</span>
+        <svg width="16" height="16" fill="none" stroke="#71717a" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+      </div>
+
+      <!-- Step dots -->
+      <div style="display:flex; gap:4px; margin-bottom:14px;">
+        <div style="width:20px; height:3px; border-radius:2px; background:#4f46e5;"></div>
+        <div style="width:20px; height:3px; border-radius:2px; background:#e4e4e7;"></div>
+        <div style="width:20px; height:3px; border-radius:2px; background:#e4e4e7;"></div>
+      </div>
+
+      <div style="color:#18181b; font-size:12px; font-weight:600; margin-bottom:3px;">Jugadores</div>
+      <div style="color:#71717a; font-size:10px; margin-bottom:10px;">¿Quién va a jugar esta ronda?</div>
+
+      <!-- Players -->
+      <div style="display:flex; flex-direction:column; gap:4px; margin-bottom:10px;">
+        <div style="background:#fff; border:1px solid #e4e4e7; border-radius:6px; padding:6px 10px; display:flex; justify-content:space-between; align-items:center; box-shadow:0 1px 2px rgba(0,0,0,0.04);">
+          <span style="font-size:10px; color:#18181b; font-weight:500;">Marco</span>
+          <svg width="12" height="12" fill="none" stroke="#a1a1aa" stroke-width="2" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </div>
+        <div style="background:#fff; border:1px solid #e4e4e7; border-radius:6px; padding:6px 10px; display:flex; justify-content:space-between; align-items:center; box-shadow:0 1px 2px rgba(0,0,0,0.04);">
+          <span style="font-size:10px; color:#18181b; font-weight:500;">Camila</span>
+          <svg width="12" height="12" fill="none" stroke="#a1a1aa" stroke-width="2" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </div>
+        <div style="background:#eef2ff; border:1px dashed #c7d2fe; border-radius:6px; padding:6px 10px; color:#4f46e5; font-size:10px; display:flex; align-items:center; gap:4px;">
+          <svg width="11" height="11" fill="none" stroke="#4f46e5" stroke-width="2" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+          Añadir jugador
+        </div>
+      </div>
+
+      <div style="background:#4f46e5; border-radius:6px; padding:7px; text-align:center; color:#fff; font-size:10px; font-weight:600; letter-spacing:0.5px;">CONTINUAR</div>
+    </div>
+    <div class="card-body">
+      <h3>C — Zinc / Indigo discreto</h3>
+      <p>Zinc para estructura, blanco para tarjetas con sombra sutil, indigo-600 como único acento. Muy moderno, tech-forward. Indigo está a años luz del morado screaming.</p>
+    </div>
+  </div>
+
+</div>
+
+<p class="subtitle" style="margin-top:20px;">Haz clic para seleccionar, o combina ideas en el terminal ("quiero la C pero con el fondo de la B").</p>

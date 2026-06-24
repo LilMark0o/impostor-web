@@ -1,6 +1,6 @@
 import type { ElementType } from 'react';
 import { Shield, Layers, EyeOff, Users, Shuffle } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/Button';
 import type { Mode, Difficulty } from '@/types';
 
 interface StepModeProps {

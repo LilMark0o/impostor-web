@@ -1,0 +1,6 @@
+{"type":"server-started","port":61187,"host":"127.0.0.1","url_host":"localhost","url":"http://localhost:61187","screen_dir":"/Users/marco/Desktop/programming/github/impostor-web/.superpowers/brainstorm/34883-1781914923/content","state_dir":"/Users/marco/Desktop/programming/github/impostor-web/.superpowers/brainstorm/34883-1781914923/state"}
+{"type":"screen-added","file":"/Users/marco/Desktop/programming/github/impostor-web/.superpowers/brainstorm/34883-1781914923/content/scope.html"}
+{"type":"screen-added","file":"/Users/marco/Desktop/programming/github/impostor-web/.superpowers/brainstorm/34883-1781914923/content/waiting-1.html"}
+{"type":"screen-added","file":"/Users/marco/Desktop/programming/github/impostor-web/.superpowers/brainstorm/34883-1781914923/content/architecture.html"}
+{"type":"screen-added","file":"/Users/marco/Desktop/programming/github/impostor-web/.superpowers/brainstorm/34883-1781914923/content/waiting-2.html"}
+{"type":"server-stopped","reason":"idle timeout"}

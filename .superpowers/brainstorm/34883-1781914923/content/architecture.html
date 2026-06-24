@@ -1,0 +1,181 @@
+<h2>Arquitectura completa — El Impostor v2</h2>
+<p class="subtitle">Diseño de las 6 features. Revisa y dime si algo cambia antes de escribir el spec.</p>
+
+<div class="section">
+  <div class="label">Diagrama del sistema</div>
+  <div class="mockup">
+    <div class="mockup-header">Sistema — impostor-api + impostor-web</div>
+    <div class="mockup-body" style="font-family:monospace;font-size:13px;line-height:1.8">
+      <pre style="margin:0;white-space:pre-wrap">
+ Browser (impostor-web)
+ ┌─────────────────────────────────────────────────────┐
+ │  Google OAuth ──► JWT guardado en localStorage      │
+ │                                                     │
+ │  Sin cuenta          Con cuenta (Google)            │
+ │  ─────────────       ──────────────────────         │
+ │  Jugadores en        Jugadores en DB (sync)         │
+ │  localStorage        Historial de partidas          │
+ │  Ve anuncios         Sin anuncios                   │
+ │  1 idioma default    Idioma preferido guardado      │
+ │                                                     │
+ │  UI: react-i18next (ES/EN, selector en header)      │
+ └──────────────────────────┬──────────────────────────┘
+                            │ HTTPS / REST
+ ┌──────────────────────────▼──────────────────────────┐
+ │  FastAPI (impostor-api)                             │
+ │                                                     │
+ │  /auth/google         POST — exchange code → JWT    │
+ │  /auth/me             GET  — user info              │
+ │  /api/game/start      POST — run a game round       │
+ │  /api/categories      GET  — default list           │
+ │  /api/categories/validate  POST — LLM check         │
+ │  /users/players       GET/POST/DELETE (auth)        │
+ │  /users/history       GET (auth)                    │
+ │  /users/categories    GET/POST/DELETE (auth)        │
+ │                                                     │
+ │  SQLite (dev) / Postgres (prod) vía SQLAlchemy      │
+ │  Alembic para migraciones                           │
+ │                                                     │
+ │  OpenRouter LLM ─► pick_word (con word_difficulty)  │
+ │  Telegram Bot   ─► envío de roles                   │
+ └─────────────────────────────────────────────────────┘</pre>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="label">Base de datos — tablas nuevas</div>
+  <div class="mockup">
+    <div class="mockup-body" style="font-family:monospace;font-size:13px;line-height:1.8">
+      <pre style="margin:0;white-space:pre-wrap">
+users
+  id          UUID  PK
+  google_id   TEXT  UNIQUE
+  email       TEXT
+  name        TEXT
+  lang        TEXT  default 'es'
+  created_at  TIMESTAMP
+
+players  (jugadores sincronizados — solo usuarios con cuenta)
+  id          UUID  PK
+  user_id     UUID  FK → users
+  name        TEXT
+  telegram_id BIGINT
+  created_at  TIMESTAMP
+
+game_rounds  (historial)
+  id          UUID  PK
+  user_id     UUID  FK → users  (NULL si sin cuenta — no se guarda)
+  mode        TEXT
+  difficulty  TEXT
+  word_difficulty TEXT
+  category    TEXT
+  n_impostors INT
+  sent        JSON  (lista de nombres)
+  failed      JSON
+  played_at   TIMESTAMP
+
+saved_categories  (categorías favoritas del usuario)
+  id          UUID  PK
+  user_id     UUID  FK → users
+  name        TEXT
+  created_at  TIMESTAMP</pre>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="label">Feature A — Gameplay improvements</div>
+  <div style="background:#1e1e2e;border-radius:8px;padding:16px;margin-top:8px">
+    <p style="margin:0 0 8px"><strong>word_difficulty</strong> — nuevo campo en StartGameRequest:</p>
+    <ul style="margin:0;padding-left:20px;line-height:2">
+      <li><code>popular</code>: palabras famosas (Messi, Coca-Cola, perro)</li>
+      <li><code>obscuro</code>: palabras raras del nicho (jugador colombiano de 3ra división)</li>
+    </ul>
+    <p style="margin:12px 0 8px"><strong>Categoría por ronda</strong> — el frontend ya puede mandar <code>categories</code>, solo falta conectarlo en la UI. Flujo:</p>
+    <ul style="margin:0;padding-left:20px;line-height:2">
+      <li>Toggle "Categoría aleatoria" (default ON)</li>
+      <li>Si OFF: selector de categoría de la lista + opción "Proponer una"</li>
+      <li>Si propone una → POST /api/categories/validate → LLM la evalúa → si pasa, se usa</li>
+    </ul>
+    <p style="margin:12px 0 8px"><strong>Impostores</strong> — en modo clásico, slider "N° de impostores" (1 a max jugadores/2)</p>
+  </div>
+</div>
+
+<div class="section">
+  <div class="label">Feature B — Tutorial Telegram ID</div>
+  <div style="background:#1e1e2e;border-radius:8px;padding:16px;margin-top:8px">
+    <p style="margin:0">El Tutorial actual es texto plano. Mejora:</p>
+    <ul style="margin:8px 0 0;padding-left:20px;line-height:2">
+      <li>Pasos numerados con ícono del paso</li>
+      <li>Paso 2: enlace directo a <strong>@userinfobot</strong> en Telegram — reenvías cualquier mensaje y te dice tu ID</li>
+      <li>Código de ID resaltado visualmente ("Tu ID: <code>123456789</code>")</li>
+      <li>Captura o diagrama inline (SVG) del flujo</li>
+    </ul>
+  </div>
+</div>
+
+<div class="section">
+  <div class="label">Feature C — Historial de partidas</div>
+  <div style="background:#1e1e2e;border-radius:8px;padding:16px;margin-top:8px">
+    <p style="margin:0">Dos niveles:</p>
+    <ul style="margin:8px 0 0;padding-left:20px;line-height:2">
+      <li><strong>Sin cuenta</strong>: últimas 20 rondas en localStorage. Un drawer "Historial" en el header.</li>
+      <li><strong>Con cuenta</strong>: histórico completo en DB, paginado, sincronizado entre devices.</li>
+    </ul>
+    <p style="margin:8px 0 0">Cada entrada muestra: fecha, categoría, modo, enviados ✅ / fallidos ❌.</p>
+  </div>
+</div>
+
+<div class="section">
+  <div class="label">Feature D — i18n (Español / Inglés)</div>
+  <div style="background:#1e1e2e;border-radius:8px;padding:16px;margin-top:8px">
+    <ul style="margin:0;padding-left:20px;line-height:2">
+      <li>Librería: <strong>react-i18next</strong> con namespaces por sección</li>
+      <li>Selector de idioma en el header (ES / EN) — persiste en localStorage (o en DB si hay cuenta)</li>
+      <li>Backend: categorías y mensajes de Telegram se envían en el idioma que manda el frontend (<code>lang</code> param)</li>
+      <li>LLM prompts ya son en inglés internamente — no cambia</li>
+    </ul>
+  </div>
+</div>
+
+<div class="section">
+  <div class="label">Feature E — Google Ads</div>
+  <div style="background:#1e1e2e;border-radius:8px;padding:16px;margin-top:8px">
+    <ul style="margin:0;padding-left:20px;line-height:2">
+      <li>Script de AdSense en <code>index.html</code> (solo si <code>VITE_ADSENSE_ID</code> definido)</li>
+      <li>Componente <code>&lt;AdSlot /&gt;</code> — renders un banner solo si el usuario NO está autenticado</li>
+      <li>Slots: uno debajo del header, uno entre result y "Otra ronda"</li>
+      <li>Requiere que tengas el dominio aprobado por Google — el código se puede poner ya pero no muestra ads reales hasta aprobación</li>
+    </ul>
+  </div>
+</div>
+
+<div class="section">
+  <div class="label">Feature F — Cuentas (Google OAuth)</div>
+  <div style="background:#1e1e2e;border-radius:8px;padding:16px;margin-top:8px">
+    <ul style="margin:0;padding-left:20px;line-height:2">
+      <li>Frontend: botón "Continuar con Google" → popup OAuth → recibe code → POST /auth/google → JWT</li>
+      <li>JWT guardado en localStorage, enviado en <code>Authorization: Bearer</code> header</li>
+      <li>Backend: <code>authlib</code> valida el Google token, crea/actualiza user en DB, devuelve JWT propio</li>
+      <li>Hook <code>useAuth</code> expone <code>{ user, login, logout, isLoading }</code></li>
+      <li>Hook <code>usePlayers</code> ya existe — cuando hay JWT, sincroniza con <code>/users/players</code> en vez de localStorage</li>
+    </ul>
+  </div>
+</div>
+
+<div class="section">
+  <div class="label">Testing</div>
+  <div style="background:#1e1e2e;border-radius:8px;padding:16px;margin-top:8px">
+    <ul style="margin:0;padding-left:20px;line-height:2">
+      <li><strong>Backend</strong>: pytest con mocks — auth middleware mockeable, DB en SQLite in-memory para tests</li>
+      <li><strong>Frontend</strong>: Vitest + Testing Library para hooks y componentes críticos (useAuth, usePlayers sync, CategorySelector validation)</li>
+      <li>CI actualizado: ambos repos corren tests + lint en cada push</li>
+    </ul>
+  </div>
+</div>
+
+<div class="section" style="background:#2d1b69;border-radius:8px;padding:16px;border:1px solid #7c3aed">
+  <p style="margin:0;font-weight:600">¿Este diseño se ve bien? Si apruebas, escribo el spec formal y el plan de implementación.</p>
+  <p style="margin:8px 0 0;color:#a78bfa">Si algo cambia — el slider de impostores, la estructura de DB, los slots de ads — dímelo en terminal.</p>
+</div>

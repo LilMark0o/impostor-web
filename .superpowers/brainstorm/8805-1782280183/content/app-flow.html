@@ -1,0 +1,99 @@
+<h2>¿Cuál debe ser el flujo principal de la app?</h2>
+<p class="subtitle">El back ya funciona. Esta decisión define qué pantallas ve el usuario y en qué orden.</p>
+
+<div class="cards">
+
+  <!-- Option A: Single screen improved -->
+  <div class="card" data-choice="a" onclick="toggleSelect(this)">
+    <div class="card-image" style="background:#0f0f1a; padding:16px; border-radius:8px; font-family:sans-serif;">
+      <div style="background:#1a1a2e; border-radius:6px; padding:10px; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center;">
+        <span style="color:#a78bfa; font-weight:700; font-size:13px;">🎭 El Impostor</span>
+        <span style="color:#888; font-size:11px;">⚙️ 4 jugadores</span>
+      </div>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-bottom:8px;">
+        <div style="background:#2d2b55; border:2px solid #7c3aed; border-radius:6px; padding:8px; text-align:center;">
+          <div style="font-size:16px;">🎲</div>
+          <div style="color:#fff; font-size:10px; font-weight:600;">Caos</div>
+        </div>
+        <div style="background:#1e1e3a; border-radius:6px; padding:8px; text-align:center;">
+          <div style="font-size:16px;">🕶️</div>
+          <div style="color:#888; font-size:10px;">Ciego</div>
+        </div>
+      </div>
+      <div style="background:#1a1a2e; border-radius:20px; display:flex; margin-bottom:8px; overflow:hidden;">
+        <div style="flex:1; padding:5px; text-align:center; font-size:10px; color:#888;">Fácil</div>
+        <div style="flex:1; padding:5px; text-align:center; font-size:10px; background:#7c3aed; color:#fff; border-radius:20px;">Difícil</div>
+        <div style="flex:1; padding:5px; text-align:center; font-size:10px; color:#888;">Brutal</div>
+      </div>
+      <div style="background:#7c3aed; border-radius:6px; padding:8px; text-align:center; color:#fff; font-size:11px; font-weight:700;">▶ JUGAR</div>
+    </div>
+    <div class="card-body">
+      <h3>A — Una sola pantalla (mejorada)</h3>
+      <p>Todo en un solo scroll: selector de modo, dificultad, jugadores visibles en la pantalla principal (no ocultos en drawer). Más acceso rápido. Jugadores siempre visibles.</p>
+    </div>
+  </div>
+
+  <!-- Option B: Wizard/Steps -->
+  <div class="card" data-choice="b" onclick="toggleSelect(this)">
+    <div class="card-image" style="background:#0f0f1a; padding:16px; border-radius:8px; font-family:sans-serif;">
+      <!-- Step indicator -->
+      <div style="display:flex; align-items:center; justify-content:center; gap:6px; margin-bottom:12px;">
+        <div style="width:24px; height:24px; border-radius:50%; background:#7c3aed; color:#fff; font-size:10px; display:flex; align-items:center; justify-content:center; font-weight:700;">1</div>
+        <div style="width:20px; height:2px; background:#7c3aed;"></div>
+        <div style="width:24px; height:24px; border-radius:50%; background:#2d2b55; color:#888; font-size:10px; display:flex; align-items:center; justify-content:center; font-weight:700;">2</div>
+        <div style="width:20px; height:2px; background:#333;"></div>
+        <div style="width:24px; height:24px; border-radius:50%; background:#2d2b55; color:#888; font-size:10px; display:flex; align-items:center; justify-content:center; font-weight:700;">3</div>
+      </div>
+      <!-- Step 1 content: players -->
+      <div style="background:#1a1a2e; border-radius:6px; padding:10px; margin-bottom:8px;">
+        <div style="color:#a78bfa; font-size:10px; font-weight:700; margin-bottom:6px;">PASO 1 — Jugadores</div>
+        <div style="display:flex; gap:4px; flex-wrap:wrap;">
+          <div style="background:#2d2b55; border-radius:20px; padding:3px 8px; color:#fff; font-size:10px;">Marco</div>
+          <div style="background:#2d2b55; border-radius:20px; padding:3px 8px; color:#fff; font-size:10px;">Camila</div>
+          <div style="background:#1e3a2e; border:1px dashed #555; border-radius:20px; padding:3px 8px; color:#555; font-size:10px;">+ Añadir</div>
+        </div>
+      </div>
+      <div style="background:#7c3aed; border-radius:6px; padding:6px; text-align:center; color:#fff; font-size:10px; font-weight:700;">Siguiente →</div>
+      <div style="color:#555; font-size:9px; text-align:center; margin-top:6px;">Siguiente: elegir modo de juego</div>
+    </div>
+    <div class="card-body">
+      <h3>B — Wizard por pasos (Recomendado)</h3>
+      <p>Paso 1: añadir jugadores. Paso 2: elegir modo + dificultad. Paso 3: ¡jugar! Guía al usuario nuevo sin abrumarlo. Barra de progreso visible.</p>
+    </div>
+  </div>
+
+  <!-- Option C: Card/Hub -->
+  <div class="card" data-choice="c" onclick="toggleSelect(this)">
+    <div class="card-image" style="background:#0f0f1a; padding:16px; border-radius:8px; font-family:sans-serif;">
+      <div style="color:#a78bfa; font-size:12px; font-weight:700; text-align:center; margin-bottom:10px;">🎭 Bienvenido, Marco</div>
+      <div style="background:#1a1a2e; border-radius:6px; padding:10px; margin-bottom:6px; display:flex; justify-content:space-between; align-items:center;">
+        <div>
+          <div style="color:#fff; font-size:10px; font-weight:600;">Nueva partida</div>
+          <div style="color:#888; font-size:9px;">4 jugadores listos</div>
+        </div>
+        <div style="background:#7c3aed; border-radius:6px; padding:4px 8px; color:#fff; font-size:10px;">▶ Jugar</div>
+      </div>
+      <div style="background:#1a1a2e; border-radius:6px; padding:10px; margin-bottom:6px; display:flex; justify-content:space-between; align-items:center;">
+        <div>
+          <div style="color:#fff; font-size:10px; font-weight:600;">Historial</div>
+          <div style="color:#888; font-size:9px;">3 partidas jugadas</div>
+        </div>
+        <div style="color:#555; font-size:10px;">→</div>
+      </div>
+      <div style="background:#1a1a2e; border-radius:6px; padding:10px; display:flex; justify-content:space-between; align-items:center;">
+        <div>
+          <div style="color:#fff; font-size:10px; font-weight:600;">Jugadores</div>
+          <div style="color:#888; font-size:9px;">Gestionar lista</div>
+        </div>
+        <div style="color:#555; font-size:10px;">→</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>C — Dashboard tipo app</h3>
+      <p>Vista tipo "home" con accesos rápidos a nueva partida, historial y jugadores. Más complejo, requiere router y múltiples vistas. Más escalable a largo plazo.</p>
+    </div>
+  </div>
+
+</div>
+
+<p class="subtitle" style="margin-top:20px;">Haz clic en la opción que más te convenza, o cuéntame en el terminal.</p>

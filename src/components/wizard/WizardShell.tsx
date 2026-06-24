@@ -19,8 +19,8 @@ const stepKeys: Step[] = [1, 2, 3];
 
 export function WizardShell() {
   const [step, setStep] = useState<Step>(1);
-  const [mode, _setMode] = useState<Mode>('caos');
-  const [difficulty, _setDifficulty] = useState<Difficulty>('dificil');
+  const [mode, setMode] = useState<Mode>('caos');
+  const [difficulty, setDifficulty] = useState<Difficulty>('dificil');
 
   const { players, addPlayer, removePlayer } = usePlayers();
   const { state, result, start } = useGame();
@@ -102,9 +102,15 @@ export function WizardShell() {
           )}
           {step === 2 && (
             <div className="text-stone-600">
-              {/* StepMode placeholder — implemented in FE Task 5 */}
+              {/* StepMode placeholder — will be replaced in FE Task 5 */}
               <p className="text-sm">Modo: {mode}</p>
               <p className="text-sm">Dificultad: {difficulty}</p>
+              <div className="mt-2 flex gap-2">
+                <button type="button" onClick={() => setMode('caos')} className="text-xs text-stone-400 underline">caos</button>
+                <button type="button" onClick={() => setMode('espejo')} className="text-xs text-stone-400 underline">espejo</button>
+                <button type="button" onClick={() => setDifficulty('facil')} className="text-xs text-stone-400 underline">fácil</button>
+                <button type="button" onClick={() => setDifficulty('dificil')} className="text-xs text-stone-400 underline">difícil</button>
+              </div>
               <div className="mt-4 flex gap-2">
                 <button
                   type="button"

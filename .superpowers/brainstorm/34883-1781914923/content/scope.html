@@ -1,0 +1,97 @@
+<h2>Scope del roadmap — ¿Qué construimos primero?</h2>
+<p class="subtitle">Hay demasiado para un solo spec. Identifiquemos los bloques y el orden.</p>
+
+<div class="section">
+  <div class="label">Estado actual</div>
+  <p>Ya existe: 5 modos de juego, 3 dificultades de pista, envío por Telegram, jugadores en localStorage, UI básica. Lo que <strong>falta</strong> está abajo.</p>
+</div>
+
+<div class="section">
+  <div class="label">Features pedidas — agrupadas por subsistema</div>
+
+  <div class="options" data-multiselect>
+
+    <div class="option" data-choice="gameplay" onclick="toggleSelect(this)">
+      <div class="letter">A</div>
+      <div class="content">
+        <h3>Gameplay improvements</h3>
+        <p>
+          • Dificultad de nicho (palabras raras vs. famosas)<br>
+          • Escoger categoría cada ronda (o aleatoria)<br>
+          • Proponer categorías propias + validación LLM<br>
+          • Control de número de impostores<br>
+          • <em>Esfuerzo: medio — solo backend + UI form</em>
+        </p>
+      </div>
+    </div>
+
+    <div class="option" data-choice="tutorial" onclick="toggleSelect(this)">
+      <div class="letter">B</div>
+      <div class="content">
+        <h3>Tutorial mejorado — cómo encontrar tu Telegram ID</h3>
+        <p>
+          • Pasos con capturas o diagrama<br>
+          • Enlace directo a @userinfobot<br>
+          • Actualmente existe como acordeón básico de texto<br>
+          • <em>Esfuerzo: bajo — puro frontend</em>
+        </p>
+      </div>
+    </div>
+
+    <div class="option" data-choice="history" onclick="toggleSelect(this)">
+      <div class="letter">C</div>
+      <div class="content">
+        <h3>Historial de rondas</h3>
+        <p>
+          • Log local (localStorage) de todas las partidas<br>
+          • Ver categoría, modo, resultado, quiénes recibieron vs. fallaron<br>
+          • <em>Esfuerzo: bajo-medio — solo frontend</em>
+        </p>
+      </div>
+    </div>
+
+    <div class="option" data-choice="i18n" onclick="toggleSelect(this)">
+      <div class="letter">D</div>
+      <div class="content">
+        <h3>i18n — Español e Inglés</h3>
+        <p>
+          • Toda la UI en dos idiomas<br>
+          • Selector de idioma persistido<br>
+          • Las categorías y prompts del backend también bilingüe<br>
+          • <em>Esfuerzo: alto — toca todo</em>
+        </p>
+      </div>
+    </div>
+
+    <div class="option" data-choice="ads" onclick="toggleSelect(this)">
+      <div class="letter">E</div>
+      <div class="content">
+        <h3>Google Ads (monetización)</h3>
+        <p>
+          • AdSense script + slots en la UI<br>
+          • Solo para usuarios sin cuenta / free tier<br>
+          • Requiere que el dominio esté aprobado por Google<br>
+          • <em>Esfuerzo: bajo de código, pero requiere dominio y aprobación</em>
+        </p>
+      </div>
+    </div>
+
+    <div class="option" data-choice="accounts" onclick="toggleSelect(this)">
+      <div class="letter">F</div>
+      <div class="content">
+        <h3>Cuentas de usuario opcionales</h3>
+        <p>
+          • Sign up / login para sincronizar jugadores entre dispositivos<br>
+          • Sin cuenta = solo localStorage (ya funciona)<br>
+          • Requiere backend auth + DB<br>
+          • <em>Esfuerzo: alto — cambia la arquitectura del backend</em>
+        </p>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="section">
+  <p class="subtitle">Selecciona los bloques que quieres en esta primera iteración del spec. Puedo hacer uno o varios, pero los más grandes (i18n, cuentas) merecen su propio spec.</p>
+</div>
