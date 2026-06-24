@@ -1,19 +1,8 @@
 import type { StartGameResponse, Difficulty } from '@/types';
 import { QrCard } from './QrCard';
+import { MODE_LABELS, DIFFICULTY_LABELS } from '@/constants/labels';
 
-const MODE_LABELS: Record<string, string> = {
-  clasico: 'Clásico',
-  caos: 'Caos',
-  ciego: 'Ciego',
-  aliados: 'Aliados',
-  espejo: 'Espejo',
-};
-
-const DIFFICULTY_LABELS: Record<string, string> = {
-  facil: 'Fácil',
-  dificil: 'Difícil',
-  brutal: 'Brutal',
-};
+const ORIGIN = window.location.origin;
 
 interface GameInProgressProps {
   result: StartGameResponse;
@@ -22,14 +11,16 @@ interface GameInProgressProps {
 }
 
 export function GameInProgress({ result, difficulty, onNewRound }: GameInProgressProps) {
-  const origin = window.location.origin;
-
   const shareAllLinks = async () => {
     const lines = result.players
       .filter((p) => p.token)
-      .map((p) => `${p.name}: ${origin}/p/${p.token}`)
+      .map((p) => `${p.name}: ${ORIGIN}/p/${p.token}`)
       .join('\n');
-    await navigator.clipboard.writeText(lines);
+    try {
+      await navigator.clipboard.writeText(lines);
+    } catch {
+      // clipboard unavailable (non-HTTPS, denied permission) — fail silently
+    }
   };
 
   const hasFailed = result.failed.length > 0;
@@ -58,7 +49,7 @@ export function GameInProgress({ result, difficulty, onNewRound }: GameInProgres
             key={player.token || player.name}
             name={player.name}
             token={player.token}
-            origin={origin}
+            origin={ORIGIN}
           />
         ))}
       </div>

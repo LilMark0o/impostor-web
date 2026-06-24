@@ -14,9 +14,13 @@ export function QrCard({ name, token, origin }: QrCardProps) {
   const url = `${origin}/p/${token}`;
 
   const handleCopy = async () => {
-    await navigator.clipboard.writeText(url);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    try {
+      await navigator.clipboard.writeText(url);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      // clipboard unavailable (non-HTTPS, denied permission) — fail silently
+    }
   };
 
   return (

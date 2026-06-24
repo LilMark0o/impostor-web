@@ -1,19 +1,6 @@
 import { Shield, Layers, EyeOff, Users, Shuffle, Target, UserX, Loader2, type LucideIcon } from 'lucide-react';
 import type { Mode, Difficulty, Player } from '@/types';
-
-const MODE_LABELS: Record<Mode, string> = {
-  clasico: 'Clásico',
-  caos: 'Caos',
-  ciego: 'Ciego',
-  aliados: 'Aliados',
-  espejo: 'Espejo',
-};
-
-const DIFFICULTY_LABELS: Record<Difficulty, string> = {
-  facil: 'Fácil',
-  dificil: 'Difícil',
-  brutal: 'Brutal',
-};
+import { MODE_LABELS, DIFFICULTY_LABELS } from '@/constants/labels';
 
 const MODE_ICONS: Record<Mode, LucideIcon> = {
   clasico: Shield,
