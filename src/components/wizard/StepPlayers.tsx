@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import { Info, PhoneOff, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -16,10 +16,27 @@ export function StepPlayers({ players, addPlayer, removePlayer, onNext }: StepPl
   const [telegramId, setTelegramId] = useState('');
   const nameInputRef = useRef<HTMLInputElement>(null);
 
+  const handleNameChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setName(e.target.value);
+  }, []);
+
+  const handleTelegramIdChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setTelegramId(e.target.value);
+  }, []);
+
+  const handleRemove = useCallback(
+    (e: React.MouseEvent<HTMLButtonElement>) => {
+      const id = e.currentTarget.dataset.id!;
+      removePlayer(id);
+    },
+    [removePlayer],
+  );
+
   const handleAdd = () => {
     const trimmedName = name.trim();
     if (!trimmedName) return;
-    const tid = telegramId.trim() ? parseInt(telegramId.trim(), 10) : undefined;
+    const parsed = telegramId.trim() ? parseInt(telegramId.trim(), 10) : undefined;
+    const tid = parsed !== undefined && !isNaN(parsed) ? parsed : undefined;
     addPlayer(trimmedName, tid);
     setName('');
     setTelegramId('');
@@ -64,7 +81,8 @@ export function StepPlayers({ players, addPlayer, removePlayer, onNext }: StepPl
               </div>
               <button
                 type="button"
-                onClick={() => removePlayer(player.id)}
+                data-id={player.id}
+                onClick={handleRemove}
                 className="rounded p-1 text-stone-400 transition-colors hover:bg-stone-100 hover:text-stone-600"
                 aria-label={`Eliminar ${player.name}`}
               >
@@ -82,16 +100,20 @@ export function StepPlayers({ players, addPlayer, removePlayer, onNext }: StepPl
           type="text"
           placeholder="Nombre del jugador"
           value={name}
-          onChange={(e) => setName(e.target.value)}
+          onChange={handleNameChange}
           onKeyDown={handleKeyDown}
+          aria-label="Nombre del jugador"
         />
         <Input
-          type="number"
+          type="text"
+          inputMode="numeric"
+          pattern="[0-9]*"
           placeholder="Telegram ID (opcional)"
           value={telegramId}
-          onChange={(e) => setTelegramId(e.target.value)}
+          onChange={handleTelegramIdChange}
           onKeyDown={handleKeyDown}
           className="text-sm text-stone-600"
+          aria-label="Telegram ID (opcional)"
         />
         <Button
           type="button"

@@ -1,11 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState, useCallback } from 'react';
 import { ChevronRight } from 'lucide-react';
 import { usePlayers } from '@/hooks/usePlayers';
 import { useGame } from '@/hooks/useGame';
 import { StepPlayers } from './StepPlayers';
 import { StepReview } from './StepReview';
 import { GameInProgress } from '@/components/GameInProgress';
-import type { Mode, Difficulty, StartGameResponse } from '@/types';
+import type { Mode, Difficulty } from '@/types';
 
 type Step = 1 | 2 | 3;
 
@@ -15,29 +15,26 @@ const STEP_LABELS: Record<Step, string> = {
   3: 'Revisar',
 };
 
+const stepKeys: Step[] = [1, 2, 3];
+
 export function WizardShell() {
   const [step, setStep] = useState<Step>(1);
   const [mode, setMode] = useState<Mode>('caos');
   const [difficulty, setDifficulty] = useState<Difficulty>('dificil');
-  const [gameResult, setGameResult] = useState<StartGameResponse | null>(null);
 
   const { players, addPlayer, removePlayer } = usePlayers();
   const { state, result, start } = useGame();
 
   const isLoading = state === 'loading';
 
-  // Sync game result from hook state into local state
-  useEffect(() => {
-    if (result) {
-      setGameResult(result);
-    }
-  }, [result]);
+  const handleAddPlayer = useCallback(
+    (name: string, telegramId?: number) => {
+      addPlayer(name, telegramId ?? 0);
+    },
+    [addPlayer],
+  );
 
-  const handleAddPlayer = (name: string, telegramId?: number) => {
-    addPlayer(name, telegramId ?? 0);
-  };
-
-  const onStart = async () => {
+  const onStart = useCallback(async () => {
     const authToken = localStorage.getItem('auth_token') ?? '';
     await start(
       {
@@ -48,31 +45,30 @@ export function WizardShell() {
       },
       authToken,
     );
-  };
+  }, [players, mode, difficulty, start]);
 
-  if (gameResult) {
+  const goToStep1 = useCallback(() => setStep(1), []);
+  const goToStep2 = useCallback(() => setStep(2), []);
+  const goToStep3 = useCallback(() => setStep(3), []);
+
+  if (result) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-stone-50 p-4">
         <div className="w-full max-w-2xl">
           <GameInProgress
-            result={gameResult}
-            onNewRound={() => {
-              setGameResult(null);
-              setStep(1);
-            }}
+            result={result}
+            onNewRound={goToStep1}
           />
         </div>
       </div>
     );
   }
 
-  const stepKeys: Step[] = [1, 2, 3];
-
   return (
     <div className="flex min-h-screen flex-col items-center bg-stone-50 p-4">
       <div className="w-full max-w-md">
         {/* Step indicator bar */}
-        <nav className="mb-6 flex items-center justify-center gap-1">
+        <nav aria-label="Pasos del asistente" className="mb-6 flex items-center justify-center gap-1">
           {stepKeys.map((s, index) => {
             const isActive = step === s;
             const isCompleted = step > s;
@@ -100,7 +96,7 @@ export function WizardShell() {
               players={players}
               addPlayer={handleAddPlayer}
               removePlayer={removePlayer}
-              onNext={() => setStep(2)}
+              onNext={goToStep2}
             />
           )}
           {step === 2 && (
@@ -111,14 +107,14 @@ export function WizardShell() {
               <div className="mt-4 flex gap-2">
                 <button
                   type="button"
-                  onClick={() => setStep(1)}
+                  onClick={goToStep1}
                   className="rounded-lg border border-stone-200 px-3 py-1.5 text-sm text-stone-600 hover:bg-stone-50"
                 >
                   Atrás
                 </button>
                 <button
                   type="button"
-                  onClick={() => setStep(3)}
+                  onClick={goToStep3}
                   className="rounded-lg bg-amber-600 px-3 py-1.5 text-sm text-white hover:bg-amber-700"
                 >
                   Siguiente
@@ -132,7 +128,7 @@ export function WizardShell() {
               mode={mode}
               difficulty={difficulty}
               isLoading={isLoading}
-              onBack={() => setStep(2)}
+              onBack={goToStep2}
               onStart={onStart}
             />
           )}
