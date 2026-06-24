@@ -1,7 +1,8 @@
 import { useState, useCallback } from 'react';
-import { ChevronRight } from 'lucide-react';
+import { ChevronRight, LogIn, LogOut } from 'lucide-react';
 import { usePlayers } from '@/hooks/usePlayers';
 import { useGame } from '@/hooks/useGame';
+import { useAuth } from '@/contexts/AuthContext';
 import { StepPlayers } from './StepPlayers';
 import { StepReview } from './StepReview';
 import { GameInProgress } from '@/components/GameInProgress';
@@ -65,9 +66,36 @@ export function WizardShell() {
     );
   }
 
+  const { user, login, logout } = useAuth();
+
   return (
     <div className="flex min-h-screen flex-col items-center bg-stone-50 p-4">
       <div className="w-full max-w-md">
+        {/* Top bar */}
+        <div className="mb-6 flex items-center justify-between">
+          <span className="text-stone-900 font-bold text-lg">El Impostor</span>
+          {user ? (
+            <button
+              type="button"
+              onClick={logout}
+              className="flex items-center gap-1.5 text-sm text-stone-500 hover:text-stone-800 transition-colors"
+            >
+              <LogOut size={14} />
+              {user.name.split(' ')[0]}
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={login}
+              className="flex items-center gap-1.5 text-sm text-stone-500 hover:text-stone-800 transition-colors"
+              title="Conecta para guardar jugadores y activar QR permanentes"
+            >
+              <LogIn size={14} />
+              Conectar
+            </button>
+          )}
+        </div>
+
         {/* Step indicator bar */}
         <nav aria-label="Pasos del asistente" className="mb-6 flex items-center justify-center gap-1">
           {stepKeys.map((s, index) => {
