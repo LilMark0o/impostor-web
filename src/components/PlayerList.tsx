@@ -74,7 +74,7 @@ export function PlayerList({ players, onAdd, onRemove }: PlayerListProps) {
           onKeyDown={handleKeyDown}
         />
         <Button
-          variant="primary"
+          variant="default"
           size="sm"
           onClick={handleAdd}
           disabled={!name.trim() || !telegramId.trim()}

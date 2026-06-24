@@ -90,7 +90,7 @@ export default function App() {
 
           {/* Play button */}
           <Button
-            variant="primary"
+            variant="default"
             size="lg"
             disabled={players.length < 2 || state === 'loading'}
             onClick={handleStart}

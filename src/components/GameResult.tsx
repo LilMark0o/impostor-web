@@ -61,7 +61,7 @@ export function GameResult({ result, onPlayAgain }: GameResultProps) {
         </div>
       )}
 
-      <Button variant="primary" size="lg" onClick={onPlayAgain} className="w-full">
+      <Button variant="default" size="lg" onClick={onPlayAgain} className="w-full">
         Otra ronda 🎲
       </Button>
     </div>
