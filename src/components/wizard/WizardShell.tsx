@@ -3,6 +3,8 @@ import { ChevronRight } from 'lucide-react';
 import { usePlayers } from '@/hooks/usePlayers';
 import { useGame } from '@/hooks/useGame';
 import { StepPlayers } from './StepPlayers';
+import { StepReview } from './StepReview';
+import { GameInProgress } from '@/components/GameInProgress';
 import type { Mode, Difficulty, StartGameResponse } from '@/types';
 
 type Step = 1 | 2 | 3;
@@ -51,8 +53,14 @@ export function WizardShell() {
   if (gameResult) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-stone-50 p-4">
-        <div className="w-full max-w-md rounded-xl border border-stone-200 bg-white p-6 text-center text-stone-900">
-          Game in progress
+        <div className="w-full max-w-2xl">
+          <GameInProgress
+            result={gameResult}
+            onNewRound={() => {
+              setGameResult(null);
+              setStep(1);
+            }}
+          />
         </div>
       </div>
     );
@@ -119,29 +127,14 @@ export function WizardShell() {
             </div>
           )}
           {step === 3 && (
-            <div className="text-stone-600">
-              {/* StepReview placeholder — implemented in FE Task 5 */}
-              <p className="text-sm">Jugadores: {players.length}</p>
-              <p className="text-sm">Modo: {mode}</p>
-              <p className="text-sm">Dificultad: {difficulty}</p>
-              <div className="mt-4 flex gap-2">
-                <button
-                  type="button"
-                  onClick={() => setStep(2)}
-                  className="rounded-lg border border-stone-200 px-3 py-1.5 text-sm text-stone-600 hover:bg-stone-50"
-                >
-                  Atrás
-                </button>
-                <button
-                  type="button"
-                  onClick={onStart}
-                  disabled={isLoading}
-                  className="rounded-lg bg-stone-900 px-3 py-1.5 text-sm text-white hover:bg-stone-800 disabled:opacity-50"
-                >
-                  {isLoading ? 'Iniciando...' : 'Iniciar juego'}
-                </button>
-              </div>
-            </div>
+            <StepReview
+              players={players}
+              mode={mode}
+              difficulty={difficulty}
+              isLoading={isLoading}
+              onBack={() => setStep(2)}
+              onStart={onStart}
+            />
           )}
         </div>
       </div>
