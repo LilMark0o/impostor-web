@@ -13,15 +13,15 @@ export function useReveal(token: string): {
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
-  const mountedRef = useRef(true)
 
   useEffect(() => {
-    mountedRef.current = true
-
     if (!token) {
       setIsLoading(false)
       return
     }
+
+    const abortController = new AbortController()
+    setIsLoading(true)
 
     const clearPolling = () => {
       if (intervalRef.current !== null) {
@@ -31,20 +31,21 @@ export function useReveal(token: string): {
     }
 
     const fetchState = async () => {
+      if (abortController.signal.aborted) return
       try {
         const result = await getRevealState(token)
-        if (!mountedRef.current) return
+        if (abortController.signal.aborted) return
         setData(result)
         setError(null)
         if (result.state === 'ready') {
           clearPolling()
         }
       } catch (err) {
-        if (!mountedRef.current) return
-        setError(err instanceof Error ? err.message : 'Unknown error')
+        if (abortController.signal.aborted) return
+        setError(err instanceof Error ? err.message : 'Error al obtener estado')
         clearPolling()
       } finally {
-        if (mountedRef.current) {
+        if (!abortController.signal.aborted) {
           setIsLoading(false)
         }
       }
@@ -57,7 +58,7 @@ export function useReveal(token: string): {
     intervalRef.current = setInterval(fetchState, POLL_INTERVAL)
 
     return () => {
-      mountedRef.current = false
+      abortController.abort()
       clearPolling()
     }
   }, [token])
