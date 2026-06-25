@@ -27,9 +27,19 @@ export default function RevealPage() {
 
   // Error: early return so errors after data is set are never swallowed
   if (error) {
+    const isNotFound = error.includes('404')
     return (
-      <div className="min-h-screen bg-stone-50 flex flex-col items-center justify-center gap-4">
-        <p className="text-red-500 text-center px-4">{error}</p>
+      <div className="min-h-screen bg-stone-50 flex flex-col items-center justify-center gap-4 px-6 text-center">
+        {isNotFound ? (
+          <>
+            <p className="text-stone-700 font-semibold">Reveal no disponible</p>
+            <p className="text-stone-400 text-sm">
+              Este enlace es de un juego anónimo. Inicia sesión para activar el reveal permanente.
+            </p>
+          </>
+        ) : (
+          <p className="text-red-500">{error}</p>
+        )}
       </div>
     )
   }
