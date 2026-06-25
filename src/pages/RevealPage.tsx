@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { Hand, CheckCircle2, AlertTriangle } from 'lucide-react'
+import { Hand, CheckCircle2, AlertTriangle, Unlink } from 'lucide-react'
 import { useReveal } from '../hooks/useReveal'
 
 export default function RevealPage() {
@@ -29,16 +29,20 @@ export default function RevealPage() {
   if (error) {
     const isNotFound = error.includes('404')
     return (
-      <div className="min-h-screen bg-stone-50 flex flex-col items-center justify-center gap-4 px-6 text-center">
-        {isNotFound ? (
-          <>
-            <p className="text-stone-700 font-semibold">Reveal no disponible</p>
-            <p className="text-stone-400 text-sm">
-              Este enlace es de un juego anónimo. Inicia sesión para activar el reveal permanente.
-            </p>
-          </>
-        ) : (
-          <p className="text-red-500">{error}</p>
+      <div className="min-h-screen bg-stone-900 flex flex-col items-center justify-center gap-5 px-8 text-center">
+        <Unlink size={48} className="text-stone-500" />
+        <h1 className="text-white text-xl font-bold">
+          {isNotFound ? 'No encontramos este jugador' : 'Algo salió mal'}
+        </h1>
+        <p className="text-stone-400 text-sm leading-relaxed max-w-xs">
+          {isNotFound
+            ? 'Este enlace es de un juego sin cuenta. Tu sesión pudo haber vencido, o el link ya no es válido.'
+            : error}
+        </p>
+        {isNotFound && (
+          <p className="text-stone-600 text-xs">
+            Inicia sesión para tener links permanentes
+          </p>
         )}
       </div>
     )
