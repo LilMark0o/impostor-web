@@ -29,7 +29,7 @@ export function WizardShell() {
 
   const isLoading = state === 'loading';
 
-  const { user, login, logout } = useAuth();
+  const { user, token, login, logout } = useAuth();
 
   const handleAddPlayer = useCallback(
     (name: string, telegramId?: number) => {
@@ -39,14 +39,13 @@ export function WizardShell() {
   );
 
   const onStart = useCallback(async () => {
-    const authToken = localStorage.getItem('auth_token') ?? '';
     // Anonymous players have locally-generated UUIDs for UI purposes only;
     // clear id before sending so the engine skips DB result recording.
     const playersForApi = user
       ? players
       : players.map((p) => ({ ...p, id: '' }));
-    await start({ players: playersForApi, mode, difficulty, categories: [] }, authToken);
-  }, [players, mode, difficulty, start, user]);
+    await start({ players: playersForApi, mode, difficulty, categories: [] }, token ?? '');
+  }, [players, mode, difficulty, start, user, token]);
 
   const goToStep1 = useCallback(() => setStep(1), []);
   const goToStep2 = useCallback(() => setStep(2), []);
