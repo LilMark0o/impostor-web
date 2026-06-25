@@ -29,6 +29,8 @@ export function WizardShell() {
 
   const isLoading = state === 'loading';
 
+  const { user, login, logout } = useAuth();
+
   const handleAddPlayer = useCallback(
     (name: string, telegramId?: number) => {
       addPlayer(name, telegramId ?? 0);
@@ -49,8 +51,6 @@ export function WizardShell() {
   const goToStep1 = useCallback(() => setStep(1), []);
   const goToStep2 = useCallback(() => setStep(2), []);
   const goToStep3 = useCallback(() => setStep(3), []);
-
-  const { user, login, logout } = useAuth();
 
   if (result) {
     return (
