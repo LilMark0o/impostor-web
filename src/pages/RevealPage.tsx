@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { Hand, CheckCircle2, AlertTriangle, Unlink } from 'lucide-react'
 import { useReveal } from '../hooks/useReveal'
@@ -7,21 +7,31 @@ export default function RevealPage() {
   const { token } = useParams<{ token: string }>()
   const { data, error, isLoading } = useReveal(token ?? '')
   const [revealed, setRevealed] = useState(false)
+  const [isNewRound, setIsNewRound] = useState(false)
+  const prevSessionIdRef = useRef<string | undefined>(undefined)
 
   // Restore reveal state from localStorage when session_id is available
   useEffect(() => {
-    if (data?.session_id) {
-      const stored = localStorage.getItem(`reveal_${data.session_id}`)
-      if (stored === 'true') {
-        setRevealed(true)
-      }
+    if (!data?.session_id) return
+    const prev = prevSessionIdRef.current
+    const curr = data.session_id
+
+    if (prev !== undefined && prev !== curr) {
+      setIsNewRound(true)
+      setRevealed(false)
+    } else {
+      const stored = localStorage.getItem(`reveal_${curr}`)
+      if (stored === 'true') setRevealed(true)
     }
+
+    prevSessionIdRef.current = curr
   }, [data?.session_id])
 
   // Persist reveal state to localStorage
   const handleReveal = useCallback(() => {
     if (!data?.session_id) return
     localStorage.setItem(`reveal_${data.session_id}`, 'true')
+    setIsNewRound(false)
     setRevealed(true)
   }, [data?.session_id])
 
@@ -69,7 +79,9 @@ export default function RevealPage() {
         onClick={handleReveal}
       >
         <Hand size={48} className="text-amber-400" />
-        <h1 className="text-white text-2xl font-semibold">Toca para ver tu rol</h1>
+        <h1 className="text-white text-2xl font-semibold">
+          {isNewRound ? 'Nueva ronda — toca para revelar' : 'Toca para ver tu rol'}
+        </h1>
         <p className="text-stone-400">Hola, {data.player_name}</p>
       </button>
     )

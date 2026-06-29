@@ -1,12 +1,15 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { ChevronRight, LogIn, LogOut } from 'lucide-react';
 import { usePlayers } from '@/hooks/usePlayers';
 import { useGame } from '@/hooks/useGame';
 import { useAuth } from '@/contexts/AuthContext';
+import { getStoredTokens, clearStoredTokens, clearStoredCategories } from '@/lib/playerTokens';
 import { StepPlayers } from './StepPlayers';
 import { StepMode } from './StepMode';
 import { StepReview } from './StepReview';
 import { GameInProgress } from '@/components/GameInProgress';
+import { RondaPanel } from '@/components/RondaPanel';
+import type { RondaLaunchConfig } from '@/components/RondaPanel';
 import type { Mode, Difficulty } from '@/types';
 
 type Step = 1 | 2 | 3;
@@ -23,11 +26,21 @@ export function WizardShell() {
   const [step, setStep] = useState<Step>(1);
   const [mode, setMode] = useState<Mode>('caos');
   const [difficulty, setDifficulty] = useState<Difficulty>('dificil');
+  const [categories, setCategories] = useState<string[]>([]);
+  const [quickStartNames, setQuickStartNames] = useState<string[]>([]);
 
-  const { players, addPlayer, removePlayer } = usePlayers();
-  const { state, result, start } = useGame();
+  const { players, addPlayer, removePlayer, clearPlayers } = usePlayers();
+
+  useEffect(() => {
+    const stored = getStoredTokens()
+    if (stored.length > 0) {
+      setQuickStartNames(stored.map((s) => s.name))
+    }
+  }, [])
+  const { state, result, start, reset } = useGame();
 
   const isLoading = state === 'loading';
+  const [showRondaPanel, setShowRondaPanel] = useState(false);
 
   const { user, token, login, logout } = useAuth();
 
@@ -44,12 +57,53 @@ export function WizardShell() {
     const playersForApi = user
       ? players
       : players.map((p) => ({ ...p, id: '' }));
-    await start({ players: playersForApi, mode, difficulty, categories: [] }, token ?? '');
-  }, [players, mode, difficulty, start, user, token]);
+    await start({ players: playersForApi, mode, difficulty, categories }, token ?? '');
+  }, [players, mode, difficulty, categories, start, user, token]);
 
   const goToStep1 = useCallback(() => setStep(1), []);
   const goToStep2 = useCallback(() => setStep(2), []);
   const goToStep3 = useCallback(() => setStep(3), []);
+
+  const handleNewRound = useCallback(() => setShowRondaPanel(true), []);
+
+  const handleRondaLaunch = useCallback(
+    async (cfg: RondaLaunchConfig) => {
+      setShowRondaPanel(false);
+      setMode(cfg.mode);
+      setDifficulty(cfg.difficulty);
+      setCategories(cfg.categories);
+      reset();
+      const playersForApi = cfg.players.map((p) => ({
+        id: '',
+        name: p.name,
+        telegram_id: null as null,
+        token: p.token,
+      }));
+      await start(
+        { players: playersForApi, mode: cfg.mode, difficulty: cfg.difficulty, categories: cfg.categories },
+        token ?? '',
+      );
+    },
+    [reset, start, token],
+  );
+
+  if (result && showRondaPanel) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-stone-50 p-4">
+        <div className="w-full max-w-2xl">
+          <RondaPanel
+            players={result.players}
+            currentMode={mode}
+            currentDifficulty={difficulty}
+            currentCategories={categories}
+            isLoading={isLoading}
+            onLaunch={handleRondaLaunch}
+            onCancel={() => setShowRondaPanel(false)}
+          />
+        </div>
+      </div>
+    );
+  }
 
   if (result) {
     return (
@@ -57,8 +111,9 @@ export function WizardShell() {
         <div className="w-full max-w-2xl">
           <GameInProgress
             result={result}
+            mode={mode}
             difficulty={difficulty}
-            onNewRound={goToStep1}
+            onNewRound={handleNewRound}
           />
         </div>
       </div>
@@ -92,6 +147,39 @@ export function WizardShell() {
             </button>
           )}
         </div>
+
+        {/* Quick-start banner */}
+        {quickStartNames.length > 0 && step === 1 && (
+          <div className="mb-4 rounded-lg border border-amber-200 bg-amber-50 p-3">
+            <p className="text-sm text-amber-800 font-medium">
+              Continuar con {quickStartNames.join(', ')}
+            </p>
+            <div className="flex gap-3 mt-2">
+              <button
+                type="button"
+                onClick={() => {
+                  setQuickStartNames([])
+                  setStep(2)
+                }}
+                className="text-sm font-semibold text-amber-700 hover:text-amber-900 transition-colors"
+              >
+                → Continuar
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  clearPlayers()
+                  clearStoredTokens()
+                  clearStoredCategories()
+                  setQuickStartNames([])
+                }}
+                className="text-sm text-stone-500 hover:text-stone-700 transition-colors"
+              >
+                Nuevo grupo
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* Step indicator bar */}
         <nav aria-label="Pasos del asistente" className="mb-6 flex items-center justify-center gap-1">
@@ -131,6 +219,8 @@ export function WizardShell() {
               setMode={setMode}
               difficulty={difficulty}
               setDifficulty={setDifficulty}
+              categories={categories}
+              onCategoriesChange={setCategories}
               onBack={goToStep1}
               onNext={goToStep3}
             />

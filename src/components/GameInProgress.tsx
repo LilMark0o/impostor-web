@@ -1,4 +1,4 @@
-import type { StartGameResponse, Difficulty } from '@/types';
+import type { StartGameResponse, Difficulty, Mode } from '@/types';
 import { QrCard } from './QrCard';
 import { MODE_LABELS, DIFFICULTY_LABELS } from '@/constants/labels';
 
@@ -6,11 +6,12 @@ const ORIGIN = window.location.origin;
 
 interface GameInProgressProps {
   result: StartGameResponse;
+  mode: Mode;
   difficulty: Difficulty;
   onNewRound: () => void;
 }
 
-export function GameInProgress({ result, difficulty, onNewRound }: GameInProgressProps) {
+export function GameInProgress({ result, mode, difficulty, onNewRound }: GameInProgressProps) {
   const shareAllLinks = async () => {
     const lines = result.players
       .filter((p) => p.token)
@@ -24,7 +25,7 @@ export function GameInProgress({ result, difficulty, onNewRound }: GameInProgres
   };
 
   const hasFailed = result.failed.length > 0;
-  const modeLabel = MODE_LABELS[result.mode] ?? result.mode;
+  const modeLabel = MODE_LABELS[mode] ?? mode;
   const difficultyLabel = DIFFICULTY_LABELS[difficulty] ?? difficulty;
 
   return (

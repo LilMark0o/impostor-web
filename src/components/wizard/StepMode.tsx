@@ -1,6 +1,7 @@
 import type { ElementType } from 'react';
 import { Shield, Layers, EyeOff, Users, Shuffle } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
+import { CategorySelector } from '@/components/CategorySelector';
 import type { Mode, Difficulty } from '@/types';
 
 interface StepModeProps {
@@ -8,6 +9,8 @@ interface StepModeProps {
   setMode: (mode: Mode) => void;
   difficulty: Difficulty;
   setDifficulty: (d: Difficulty) => void;
+  categories: string[];
+  onCategoriesChange: (cats: string[]) => void;
   onBack: () => void;
   onNext: () => void;
 }
@@ -69,6 +72,8 @@ export function StepMode({
   setMode,
   difficulty,
   setDifficulty,
+  categories,
+  onCategoriesChange,
   onBack,
   onNext,
 }: StepModeProps) {
@@ -131,6 +136,9 @@ export function StepMode({
           </button>
         ))}
       </div>
+
+      {/* Category selector — collapsible */}
+      <CategorySelector value={categories} onChange={onCategoriesChange} />
 
       {/* Navigation buttons */}
       <div className="flex justify-between gap-2">
