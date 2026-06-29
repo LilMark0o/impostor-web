@@ -1,4 +1,4 @@
-import type { StartGameResponse, Difficulty } from '@/types';
+import type { StartGameResponse, Difficulty, Mode } from '@/types';
 import { QrCard } from './QrCard';
 import { MODE_LABELS, DIFFICULTY_LABELS } from '@/constants/labels';
 
@@ -6,6 +6,7 @@ const ORIGIN = window.location.origin;
 
 interface GameInProgressProps {
   result: StartGameResponse;
+  mode: Mode;
   difficulty: Difficulty;
   onNewRound: () => void;
 }

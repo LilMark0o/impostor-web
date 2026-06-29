@@ -7,6 +7,8 @@ import { StepPlayers } from './StepPlayers';
 import { StepMode } from './StepMode';
 import { StepReview } from './StepReview';
 import { GameInProgress } from '@/components/GameInProgress';
+import { RondaPanel } from '@/components/RondaPanel';
+import type { RondaLaunchConfig } from '@/components/RondaPanel';
 import type { Mode, Difficulty } from '@/types';
 
 type Step = 1 | 2 | 3;
@@ -26,9 +28,10 @@ export function WizardShell() {
   const [categories, setCategories] = useState<string[]>([]);
 
   const { players, addPlayer, removePlayer } = usePlayers();
-  const { state, result, start } = useGame();
+  const { state, result, start, reset } = useGame();
 
   const isLoading = state === 'loading';
+  const [showRondaPanel, setShowRondaPanel] = useState(false);
 
   const { user, token, login, logout } = useAuth();
 
@@ -52,14 +55,56 @@ export function WizardShell() {
   const goToStep2 = useCallback(() => setStep(2), []);
   const goToStep3 = useCallback(() => setStep(3), []);
 
+  const handleNewRound = useCallback(() => setShowRondaPanel(true), []);
+
+  const handleRondaLaunch = useCallback(
+    async (cfg: RondaLaunchConfig) => {
+      setShowRondaPanel(false);
+      setMode(cfg.mode);
+      setDifficulty(cfg.difficulty);
+      setCategories(cfg.categories);
+      reset();
+      const playersForApi = cfg.players.map((p) => ({
+        id: '',
+        name: p.name,
+        telegram_id: null as null,
+        token: p.token,
+      }));
+      await start(
+        { players: playersForApi, mode: cfg.mode, difficulty: cfg.difficulty, categories: cfg.categories },
+        token ?? '',
+      );
+    },
+    [reset, start, token],
+  );
+
+  if (result && showRondaPanel) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-stone-50 p-4">
+        <div className="w-full max-w-2xl">
+          <RondaPanel
+            players={result.players}
+            currentMode={mode}
+            currentDifficulty={difficulty}
+            currentCategories={categories}
+            isLoading={isLoading}
+            onLaunch={handleRondaLaunch}
+            onCancel={() => setShowRondaPanel(false)}
+          />
+        </div>
+      </div>
+    );
+  }
+
   if (result) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-stone-50 p-4">
         <div className="w-full max-w-2xl">
           <GameInProgress
             result={result}
+            mode={mode}
             difficulty={difficulty}
-            onNewRound={goToStep1}
+            onNewRound={handleNewRound}
           />
         </div>
       </div>

@@ -4,7 +4,7 @@ import { CategorySelector } from './CategorySelector'
 import type { Mode, Difficulty, PlayerTokenOut } from '@/types'
 import { cn } from '@/lib/utils'
 
-interface RondaLaunchConfig {
+export interface RondaLaunchConfig {
   mode: Mode
   difficulty: Difficulty
   categories: string[]
