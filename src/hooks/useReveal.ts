@@ -37,9 +37,6 @@ export function useReveal(token: string): {
         if (abortController.signal.aborted) return
         setData(result)
         setError(null)
-        if (result.state === 'ready') {
-          clearPolling()
-        }
       } catch (err) {
         if (abortController.signal.aborted) return
         setError(err instanceof Error ? err.message : 'Error al obtener estado')

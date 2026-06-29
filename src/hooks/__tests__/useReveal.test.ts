@@ -59,20 +59,20 @@ describe('useReveal', () => {
     expect(result.current.data).toBeNull()
   })
 
-  it('stops polling when state is ready (only 1 call after mount)', async () => {
+  it('continues polling even when state is ready', async () => {
     vi.mocked(revealApi.getRevealState).mockResolvedValue(readyState)
     vi.useFakeTimers({ shouldAdvanceTime: true })
 
     const { result } = renderHook(() => useReveal('tok-1'))
 
     await waitFor(() => expect(result.current.data?.state).toBe('ready'))
-
-    // Advance time beyond one poll interval — should NOT trigger another call
-    await act(async () => {
-      vi.advanceTimersByTime(6000)
-    })
-
     expect(revealApi.getRevealState).toHaveBeenCalledTimes(1)
+
+    // Advance time beyond one interval — polling should continue
+    await act(async () => {
+      vi.advanceTimersByTime(3000)
+    })
+    await waitFor(() => expect(revealApi.getRevealState).toHaveBeenCalledTimes(2))
   })
 
   it('continues polling while state is waiting', async () => {
@@ -101,10 +101,34 @@ describe('useReveal', () => {
     await waitFor(() => expect(result.current.data?.state).toBe('ready'))
     expect(revealApi.getRevealState).toHaveBeenCalledTimes(3)
 
-    // Advance further — no more calls since state is ready
+    // With continuous polling, advancing further triggers more calls
     await act(async () => {
-      vi.advanceTimersByTime(6000)
+      vi.advanceTimersByTime(3000)
     })
-    expect(revealApi.getRevealState).toHaveBeenCalledTimes(3)
+    await waitFor(() => expect(revealApi.getRevealState).toHaveBeenCalledTimes(4))
+  })
+
+  it('updates data when session_id changes (new round)', async () => {
+    const round2State: RevealState = {
+      state: 'ready',
+      player_name: 'Marco',
+      session_id: 'sess-2',
+      is_impostor: true,
+      category: null,
+    }
+    vi.useFakeTimers({ shouldAdvanceTime: true })
+    vi.mocked(revealApi.getRevealState)
+      .mockResolvedValueOnce(readyState)
+      .mockResolvedValue(round2State)
+
+    const { result } = renderHook(() => useReveal('tok-1'))
+
+    await waitFor(() => expect(result.current.data?.session_id).toBe('sess-1'))
+
+    await act(async () => {
+      vi.advanceTimersByTime(3000)
+    })
+    await waitFor(() => expect(result.current.data?.session_id).toBe('sess-2'))
+    expect(result.current.data?.is_impostor).toBe(true)
   })
 })
