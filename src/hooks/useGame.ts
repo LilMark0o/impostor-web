@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { startGame } from '../api/game';
 import type { StartGameRequest } from '../api/game';
 import type { StartGameResponse } from '../types';
+import { saveTokens, saveCategories } from '../lib/playerTokens';
 
 type GameState = 'idle' | 'loading' | 'result' | 'error';
 
@@ -15,6 +16,8 @@ export function useGame() {
     setError(null);
     try {
       const res = await startGame(req, token);
+      saveTokens(res.players);
+      saveCategories(req.categories ?? []);
       setResult(res);
       setState('result');
     } catch (err) {
