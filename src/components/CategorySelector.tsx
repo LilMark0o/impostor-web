@@ -18,23 +18,25 @@ export function CategorySelector({ value, onChange, className }: CategorySelecto
   const initialized = useRef(false)
 
   useEffect(() => {
-    getCategories().then((cats) => {
-      setSysCats(cats)
-      if (!initialized.current) {
-        initialized.current = true
-        if (value.length === 0) {
-          // Default: all system cats selected
-          setSelectedSys(cats)
-          setCustomCats([])
-        } else {
-          // Pre-load from saved value
-          const sys = value.filter((c) => cats.includes(c))
-          const custom = value.filter((c) => !cats.includes(c))
-          setSelectedSys(sys.length > 0 ? sys : cats)
-          setCustomCats(custom)
+    getCategories()
+      .then((cats) => {
+        setSysCats(cats)
+        if (!initialized.current) {
+          initialized.current = true
+          if (value.length === 0) {
+            setSelectedSys(cats)
+            setCustomCats([])
+          } else {
+            const sys = value.filter((c) => cats.includes(c))
+            const custom = value.filter((c) => !cats.includes(c))
+            setSelectedSys(sys.length > 0 ? sys : cats)
+            setCustomCats(custom)
+          }
         }
-      }
-    })
+      })
+      .catch(() => {
+        // API unavailable — component shows empty chip grid, custom input still works
+      })
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   function notify(sys: string[], custom: string[], allSys: string[]) {
@@ -55,7 +57,7 @@ export function CategorySelector({ value, onChange, className }: CategorySelecto
 
   function addCustom() {
     const trimmed = customInput.trim()
-    if (!trimmed || customCats.includes(trimmed)) return
+    if (!trimmed || customCats.map((c) => c.toLowerCase()).includes(trimmed.toLowerCase())) return
     const next = [...customCats, trimmed]
     setCustomCats(next)
     setCustomInput('')
@@ -78,6 +80,8 @@ export function CategorySelector({ value, onChange, className }: CategorySelecto
       <button
         type="button"
         onClick={() => setExpanded((e) => !e)}
+        aria-expanded={expanded}
+        aria-label={expanded ? 'Cerrar categorías' : 'Abrir categorías'}
         className="w-full flex items-center justify-between px-4 py-3 text-left"
       >
         <div className="flex items-center gap-2">
@@ -104,6 +108,7 @@ export function CategorySelector({ value, onChange, className }: CategorySelecto
                   key={cat}
                   type="button"
                   onClick={() => toggleSys(cat)}
+                  aria-pressed={selected}
                   className={cn(
                     'px-3 py-1 rounded-full text-sm border transition-colors capitalize',
                     selected
