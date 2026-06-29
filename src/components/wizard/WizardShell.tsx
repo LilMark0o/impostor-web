@@ -1,8 +1,9 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { ChevronRight, LogIn, LogOut } from 'lucide-react';
 import { usePlayers } from '@/hooks/usePlayers';
 import { useGame } from '@/hooks/useGame';
 import { useAuth } from '@/contexts/AuthContext';
+import { getStoredTokens, clearStoredTokens, clearStoredCategories } from '@/lib/playerTokens';
 import { StepPlayers } from './StepPlayers';
 import { StepMode } from './StepMode';
 import { StepReview } from './StepReview';
@@ -26,8 +27,16 @@ export function WizardShell() {
   const [mode, setMode] = useState<Mode>('caos');
   const [difficulty, setDifficulty] = useState<Difficulty>('dificil');
   const [categories, setCategories] = useState<string[]>([]);
+  const [quickStartNames, setQuickStartNames] = useState<string[]>([]);
 
-  const { players, addPlayer, removePlayer } = usePlayers();
+  const { players, addPlayer, removePlayer, clearPlayers } = usePlayers();
+
+  useEffect(() => {
+    const stored = getStoredTokens()
+    if (stored.length > 0) {
+      setQuickStartNames(stored.map((s) => s.name))
+    }
+  }, [])
   const { state, result, start, reset } = useGame();
 
   const isLoading = state === 'loading';
@@ -138,6 +147,39 @@ export function WizardShell() {
             </button>
           )}
         </div>
+
+        {/* Quick-start banner */}
+        {quickStartNames.length > 0 && step === 1 && (
+          <div className="mb-4 rounded-lg border border-amber-200 bg-amber-50 p-3">
+            <p className="text-sm text-amber-800 font-medium">
+              Continuar con {quickStartNames.join(', ')}
+            </p>
+            <div className="flex gap-3 mt-2">
+              <button
+                type="button"
+                onClick={() => {
+                  setQuickStartNames([])
+                  setStep(2)
+                }}
+                className="text-sm font-semibold text-amber-700 hover:text-amber-900 transition-colors"
+              >
+                → Continuar
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  clearPlayers()
+                  clearStoredTokens()
+                  clearStoredCategories()
+                  setQuickStartNames([])
+                }}
+                className="text-sm text-stone-500 hover:text-stone-700 transition-colors"
+              >
+                Nuevo grupo
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* Step indicator bar */}
         <nav aria-label="Pasos del asistente" className="mb-6 flex items-center justify-center gap-1">

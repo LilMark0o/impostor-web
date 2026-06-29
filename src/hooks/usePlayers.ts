@@ -65,5 +65,10 @@ export function usePlayers() {
     }
   }
 
-  return { players, addPlayer, removePlayer }
+  const clearPlayers = () => {
+    setPlayers([])
+    localStorage.removeItem(LS_KEY)
+  }
+
+  return { players, addPlayer, removePlayer, clearPlayers }
 }
