@@ -23,6 +23,7 @@ export function WizardShell() {
   const [step, setStep] = useState<Step>(1);
   const [mode, setMode] = useState<Mode>('caos');
   const [difficulty, setDifficulty] = useState<Difficulty>('dificil');
+  const [categories, setCategories] = useState<string[]>([]);
 
   const { players, addPlayer, removePlayer } = usePlayers();
   const { state, result, start } = useGame();
@@ -44,8 +45,8 @@ export function WizardShell() {
     const playersForApi = user
       ? players
       : players.map((p) => ({ ...p, id: '' }));
-    await start({ players: playersForApi, mode, difficulty, categories: [] }, token ?? '');
-  }, [players, mode, difficulty, start, user, token]);
+    await start({ players: playersForApi, mode, difficulty, categories }, token ?? '');
+  }, [players, mode, difficulty, categories, start, user, token]);
 
   const goToStep1 = useCallback(() => setStep(1), []);
   const goToStep2 = useCallback(() => setStep(2), []);
@@ -131,6 +132,8 @@ export function WizardShell() {
               setMode={setMode}
               difficulty={difficulty}
               setDifficulty={setDifficulty}
+              categories={categories}
+              onCategoriesChange={setCategories}
               onBack={goToStep1}
               onNext={goToStep3}
             />
