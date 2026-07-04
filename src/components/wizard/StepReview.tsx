@@ -13,11 +13,19 @@ const MODE_ICONS: Record<Mode, LucideIcon> = {
   todos_impostores: Flame,
 };
 
-function computeImpostors(playerCount: number, mode: Mode): string {
-  if (mode === 'aliados') return '2 (cómplices)';
-  if (playerCount <= 4) return '1';
-  if (playerCount <= 7) return '1–2';
-  return '2–3';
+export function computeImpostors(playerCount: number, mode: Mode): string {
+  const half = Math.floor(playerCount / 2)
+  switch (mode) {
+    case 'clasico':          return '1'
+    case 'caos':             return half <= 1 ? '1' : `1–${half}`
+    case 'aliados':          return '2'
+    case 'espejo':           return half <= 1 ? '1' : `1–${half}`
+    case 'infiltrados':      return '2'
+    case 'aleatorio':        return '?'
+    case 'sin_impostores':   return '0'
+    case 'todos_impostores': return 'todos'
+    default:                 return '?'
+  }
 }
 
 interface StepReviewProps {

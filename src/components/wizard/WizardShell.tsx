@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from 'react';
-import { ChevronRight, LogIn, LogOut } from 'lucide-react';
+import { ChevronRight } from 'lucide-react';
 import { usePlayers } from '@/hooks/usePlayers';
 import { useGame } from '@/hooks/useGame';
 import { useAuth } from '@/contexts/AuthContext';
@@ -28,6 +28,8 @@ export function WizardShell() {
   const [difficulty, setDifficulty] = useState<Difficulty>('dificil');
   const [categories, setCategories] = useState<string[]>([]);
   const [quickStartNames, setQuickStartNames] = useState<string[]>([]);
+  const [showCategoryToImpostor, setShowCategoryToImpostor] = useState(true)
+  const [showImpostorCount, setShowImpostorCount] = useState(true)
 
   const { players, addPlayer, removePlayer, clearPlayers } = usePlayers();
 
@@ -39,10 +41,16 @@ export function WizardShell() {
   }, [])
   const { state, result, start, reset } = useGame();
 
+  useEffect(() => {
+    if (result?.mode && result.mode !== 'aleatorio') {
+      setMode(result.mode as Mode)
+    }
+  }, [result])
+
   const isLoading = state === 'loading';
   const [showRondaPanel, setShowRondaPanel] = useState(false);
 
-  const { user, token, login, logout } = useAuth();
+  const { user, token } = useAuth();
 
   const handleAddPlayer = useCallback(
     (name: string, telegramId?: number) => {
@@ -57,7 +65,7 @@ export function WizardShell() {
     const playersForApi = user
       ? players
       : players.map((p) => ({ ...p, id: '' }));
-    await start({ players: playersForApi, mode, difficulty, categories }, token ?? '');
+    await start({ players: playersForApi, mode, difficulty, categories, show_category_to_impostor: showCategoryToImpostor, show_impostor_count: showImpostorCount }, token ?? '');
   }, [players, mode, difficulty, categories, start, user, token]);
 
   const goToStep1 = useCallback(() => setStep(1), []);
@@ -126,26 +134,6 @@ export function WizardShell() {
         {/* Top bar */}
         <div className="mb-6 flex items-center justify-between">
           <span className="text-stone-900 font-bold text-lg">El Impostor</span>
-          {user ? (
-            <button
-              type="button"
-              onClick={logout}
-              className="flex items-center gap-1.5 text-sm text-stone-500 hover:text-stone-800 transition-colors"
-            >
-              <LogOut size={14} />
-              {user.name.split(' ')[0]}
-            </button>
-          ) : (
-            <button
-              type="button"
-              onClick={login}
-              className="flex items-center gap-1.5 text-sm text-stone-500 hover:text-stone-800 transition-colors"
-              title="Conecta para guardar jugadores y activar QR permanentes"
-            >
-              <LogIn size={14} />
-              Conectar
-            </button>
-          )}
         </div>
 
         {/* Quick-start banner */}
@@ -223,6 +211,11 @@ export function WizardShell() {
               onCategoriesChange={setCategories}
               onBack={goToStep1}
               onNext={goToStep3}
+              playerCount={players.length}
+              showCategoryToImpostor={showCategoryToImpostor}
+              onShowCategoryToImpostorChange={setShowCategoryToImpostor}
+              showImpostorCount={showImpostorCount}
+              onShowImpostorCountChange={setShowImpostorCount}
             />
           )}
           {step === 3 && (
