@@ -80,6 +80,8 @@ export function WizardShell() {
       setMode(cfg.mode);
       setDifficulty(cfg.difficulty);
       setCategories(cfg.categories);
+      setShowCategoryToImpostor(cfg.showCategoryToImpostor);
+      setShowImpostorCount(cfg.showImpostorCount);
       reset();
       const playersForApi = cfg.players.map((p) => ({
         id: '',
@@ -88,7 +90,14 @@ export function WizardShell() {
         token: p.token,
       }));
       await start(
-        { players: playersForApi, mode: cfg.mode, difficulty: cfg.difficulty, categories: cfg.categories },
+        {
+          players: playersForApi,
+          mode: cfg.mode,
+          difficulty: cfg.difficulty,
+          categories: cfg.categories,
+          show_category_to_impostor: cfg.showCategoryToImpostor,
+          show_impostor_count: cfg.showImpostorCount,
+        },
         token ?? '',
       );
     },

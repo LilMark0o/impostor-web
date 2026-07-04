@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Shield, Layers, Users, Shuffle } from 'lucide-react'
+import { Shield, Layers, Users, Shuffle, Eye } from 'lucide-react'
 import { CategorySelector } from './CategorySelector'
 import type { Mode, Difficulty, PlayerTokenOut } from '@/types'
 import { cn } from '@/lib/utils'
@@ -9,6 +9,8 @@ export interface RondaLaunchConfig {
   difficulty: Difficulty
   categories: string[]
   players: { name: string; token: string }[]
+  showCategoryToImpostor: boolean
+  showImpostorCount: boolean
 }
 
 interface RondaPanelProps {
@@ -21,11 +23,18 @@ interface RondaPanelProps {
   onCancel: () => void
 }
 
-const MODE_OPTIONS: { key: Mode; label: string; icon: React.ElementType }[] = [
-  { key: 'clasico', label: 'Clásico', icon: Shield },
-  { key: 'caos', label: 'Caos', icon: Layers },
-  { key: 'aliados', label: 'Aliados', icon: Users },
-  { key: 'espejo', label: 'Espejo', icon: Shuffle },
+const MODE_OPTIONS: {
+  key: Mode
+  label: string
+  icon: React.ElementType
+  minPlayers?: number
+}[] = [
+  { key: 'clasico',     label: 'Clásico',     icon: Shield },
+  { key: 'caos',        label: 'Caos',        icon: Layers },
+  { key: 'aliados',     label: 'Aliados',     icon: Users,   minPlayers: 4 },
+  { key: 'espejo',      label: 'Espejo',      icon: Shuffle },
+  { key: 'infiltrados', label: 'Infiltrados', icon: Eye,     minPlayers: 5 },
+  { key: 'aleatorio',   label: 'Aleatorio',   icon: Shuffle },
 ]
 
 const DIFFICULTY_OPTIONS: { key: Difficulty; label: string }[] = [
@@ -49,6 +58,8 @@ export function RondaPanel({
   const [rondaMode, setRondaMode] = useState<Mode>(currentMode)
   const [rondaDifficulty, setRondaDifficulty] = useState<Difficulty>(currentDifficulty)
   const [rondaCategories, setRondaCategories] = useState<string[]>(currentCategories)
+  const [showCategoryToImpostor, setShowCategoryToImpostor] = useState(true)
+  const [showImpostorCount, setShowImpostorCount] = useState(true)
 
   function addPlayer() {
     const name = newPlayerName.trim()
@@ -127,22 +138,28 @@ export function RondaPanel({
       <div>
         <span className="text-xs font-semibold uppercase tracking-wider text-stone-500">Modo</span>
         <div className="flex flex-wrap gap-2 mt-2">
-          {MODE_OPTIONS.map(({ key, label, icon: Icon }) => (
-            <button
-              key={key}
-              type="button"
-              onClick={() => setRondaMode(key)}
-              className={cn(
-                'flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm border transition-colors',
-                rondaMode === key
-                  ? 'bg-amber-50 border-amber-600 text-amber-800'
-                  : 'bg-white border-stone-200 text-stone-600 hover:bg-stone-50',
-              )}
-            >
-              <Icon size={14} />
-              {label}
-            </button>
-          ))}
+          {MODE_OPTIONS.map(({ key, label, icon: Icon, minPlayers }) => {
+            const isDisabled = minPlayers !== undefined && rondaPlayers.length < minPlayers
+            return (
+              <button
+                key={key}
+                type="button"
+                disabled={isDisabled}
+                onClick={() => !isDisabled && setRondaMode(key)}
+                className={cn(
+                  'flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm border transition-colors',
+                  isDisabled
+                    ? 'cursor-not-allowed opacity-40 bg-white border-stone-200 text-stone-600'
+                    : rondaMode === key
+                    ? 'bg-amber-50 border-amber-600 text-amber-800'
+                    : 'bg-white border-stone-200 text-stone-600 hover:bg-stone-50',
+                )}
+              >
+                <Icon size={14} />
+                {label}
+              </button>
+            )
+          })}
         </div>
       </div>
 
@@ -175,7 +192,7 @@ export function RondaPanel({
       <button
         type="button"
         disabled={isLoading || rondaPlayers.length < 2}
-        onClick={() => onLaunch({ mode: rondaMode, difficulty: rondaDifficulty, categories: rondaCategories, players: rondaPlayers })}
+        onClick={() => onLaunch({ mode: rondaMode, difficulty: rondaDifficulty, categories: rondaCategories, players: rondaPlayers, showCategoryToImpostor, showImpostorCount })}
         className="w-full rounded-lg bg-stone-900 py-3 text-sm font-semibold text-white hover:bg-stone-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {isLoading ? 'Lanzando...' : 'LANZAR RONDA'}
@@ -183,3 +200,5 @@ export function RondaPanel({
     </div>
   )
 }
+
+export default RondaPanel
