@@ -1,5 +1,5 @@
 import type { ElementType } from 'react';
-import { Shield, Layers, Users, Shuffle } from 'lucide-react';
+import { Shield, Layers, Users, Shuffle, Eye, Dices } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { CategorySelector } from '@/components/CategorySelector';
 import type { Mode, Difficulty } from '@/types';
@@ -13,42 +13,66 @@ interface StepModeProps {
   onCategoriesChange: (cats: string[]) => void;
   onBack: () => void;
   onNext: () => void;
+  playerCount?: number;
+  showCategoryToImpostor?: boolean;
+  onShowCategoryToImpostorChange?: (v: boolean) => void;
+  showImpostorCount?: boolean;
+  onShowImpostorCountChange?: (v: boolean) => void;
 }
 
-interface ModeCard {
+interface ModeCardDef {
   key: Mode;
   label: string;
   icon: ElementType;
   description: string;
+  minPlayers?: number;
+  minPlayersLabel?: string;
+  special?: boolean;
 }
 
-const MODE_CARDS: ModeCard[] = [
+const MODE_CARDS: ModeCardDef[] = [
   {
     key: 'clasico',
     label: 'Clásico',
     icon: Shield,
-    description: 'Un impostor, todos conocen la categoría',
+    description: 'Un impostor. No sabe la palabra.',
   },
   {
     key: 'caos',
     label: 'Caos',
     icon: Layers,
-    description: 'Varios impostores posibles',
+    description: 'Impostores aleatorios. Todos saben cuántos hay.',
   },
   {
     key: 'aliados',
     label: 'Aliados',
     icon: Users,
-    description: 'El impostor tiene un cómplice',
+    description: '2 impostores que se conocen entre sí.',
+    minPlayers: 4,
+    minPlayersLabel: 'Necesitas 4+ jugadores',
+  },
+  {
+    key: 'espejo',
+    label: 'Espejo',
+    icon: Shuffle,
+    description: 'El impostor tiene una palabra diferente de la misma categoría.',
+  },
+  {
+    key: 'infiltrados',
+    label: 'Infiltrados',
+    icon: Eye,
+    description: '2 impostores con palabras distintas. No se conocen.',
+    minPlayers: 5,
+    minPlayersLabel: 'Necesitas 5+ jugadores',
+  },
+  {
+    key: 'aleatorio',
+    label: 'Aleatorio',
+    icon: Dices,
+    description: 'El destino elige. Puede pasar cualquier cosa.',
+    special: true,
   },
 ];
-
-const ESPEJO_CARD: ModeCard = {
-  key: 'espejo',
-  label: 'Espejo',
-  icon: Shuffle,
-  description: 'El impostor también tiene una palabra',
-};
 
 interface DifficultyOption {
   key: Difficulty;
@@ -70,47 +94,87 @@ export function StepMode({
   onCategoriesChange,
   onBack,
   onNext,
+  playerCount = 99,
+  showCategoryToImpostor = true,
+  onShowCategoryToImpostorChange,
+  showImpostorCount = true,
+  onShowImpostorCountChange,
 }: StepModeProps) {
   return (
     <div className="flex flex-col gap-5">
       {/* Heading */}
       <h2 className="text-2xl font-bold text-stone-900">Modo de juego</h2>
 
-      {/* Mode grid */}
-      <div className="flex flex-col gap-3">
-        <div className="grid grid-cols-2 gap-3">
-          {MODE_CARDS.map(({ key, label, icon: Icon, description }) => (
+      {/* Mode grid — 2×3 */}
+      <div className="grid grid-cols-2 gap-3">
+        {MODE_CARDS.map(({ key, label, icon: Icon, description, minPlayers, minPlayersLabel, special }) => {
+          const isDisabled = minPlayers !== undefined && playerCount < minPlayers;
+          const isSelected = mode === key;
+
+          let cardClass = 'rounded-lg border p-4 text-left transition-colors ';
+          if (isDisabled) {
+            cardClass += 'opacity-40 cursor-not-allowed ';
+          } else {
+            cardClass += 'cursor-pointer ';
+          }
+          if (isSelected && special) {
+            cardClass += 'bg-amber-100 border-amber-500';
+          } else if (isSelected) {
+            cardClass += 'bg-amber-50 border-amber-600';
+          } else if (special) {
+            cardClass += 'bg-amber-50/50 border-amber-200 hover:bg-amber-50';
+          } else {
+            cardClass += 'bg-white border-stone-200 hover:bg-stone-50';
+          }
+
+          return (
             <button
               key={key}
               type="button"
+              data-testid={`mode-card-${key}`}
+              disabled={isDisabled}
               onClick={() => setMode(key)}
-              className={`rounded-lg border p-4 text-left cursor-pointer transition-colors ${
-                mode === key
-                  ? 'bg-amber-50 border-amber-600'
-                  : 'bg-white border-stone-200 hover:bg-stone-50'
-              }`}
+              className={cardClass}
             >
               <Icon size={24} className="mb-2 text-stone-700" />
               <p className="font-semibold text-stone-900">{label}</p>
               <p className="text-sm text-stone-500">{description}</p>
+              {isDisabled && minPlayersLabel && (
+                <p className="text-xs text-red-400 mt-1">{minPlayersLabel}</p>
+              )}
+              {isSelected && key === 'clasico' && (
+                <div
+                  className="flex items-center gap-2 mt-2"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <input
+                    type="checkbox"
+                    aria-label="Impostor ve la categoría"
+                    checked={showCategoryToImpostor}
+                    onChange={(e) => onShowCategoryToImpostorChange?.(e.target.checked)}
+                    onClick={(e) => e.stopPropagation()}
+                  />
+                  <span className="text-sm text-stone-700">Impostor ve la categoría</span>
+                </div>
+              )}
+              {isSelected && key === 'caos' && (
+                <div
+                  className="flex items-center gap-2 mt-2"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <input
+                    type="checkbox"
+                    aria-label="Revelar número de impostores"
+                    checked={showImpostorCount}
+                    onChange={(e) => onShowImpostorCountChange?.(e.target.checked)}
+                    onClick={(e) => e.stopPropagation()}
+                  />
+                  <span className="text-sm text-stone-700">Revelar número de impostores</span>
+                </div>
+              )}
             </button>
-          ))}
-        </div>
-
-        {/* Espejo full-width */}
-        <button
-          type="button"
-          onClick={() => setMode(ESPEJO_CARD.key)}
-          className={`w-full rounded-lg border p-4 text-left cursor-pointer transition-colors ${
-            mode === ESPEJO_CARD.key
-              ? 'bg-amber-50 border-amber-600'
-              : 'bg-white border-stone-200 hover:bg-stone-50'
-          }`}
-        >
-          <ESPEJO_CARD.icon size={24} className="mb-2 text-stone-700" />
-          <p className="font-semibold text-stone-900">{ESPEJO_CARD.label}</p>
-          <p className="text-sm text-stone-500">{ESPEJO_CARD.description}</p>
-        </button>
+          );
+        })}
       </div>
 
       {/* Difficulty pill selector */}
@@ -149,3 +213,5 @@ export function StepMode({
     </div>
   );
 }
+
+export default StepMode;
