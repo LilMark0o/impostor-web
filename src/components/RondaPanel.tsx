@@ -58,8 +58,8 @@ export function RondaPanel({
   const [rondaMode, setRondaMode] = useState<Mode>(currentMode)
   const [rondaDifficulty, setRondaDifficulty] = useState<Difficulty>(currentDifficulty)
   const [rondaCategories, setRondaCategories] = useState<string[]>(currentCategories)
-  const [showCategoryToImpostor, setShowCategoryToImpostor] = useState(true)
-  const [showImpostorCount, setShowImpostorCount] = useState(true)
+  const showCategoryToImpostor = true
+  const showImpostorCount = true
 
   function addPlayer() {
     const name = newPlayerName.trim()
