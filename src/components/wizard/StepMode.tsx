@@ -1,5 +1,5 @@
 import type { ElementType } from 'react';
-import { Shield, Layers, EyeOff, Users, Shuffle } from 'lucide-react';
+import { Shield, Layers, Users, Shuffle } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { CategorySelector } from '@/components/CategorySelector';
 import type { Mode, Difficulty } from '@/types';
@@ -34,12 +34,6 @@ const MODE_CARDS: ModeCard[] = [
     label: 'Caos',
     icon: Layers,
     description: 'Varios impostores posibles',
-  },
-  {
-    key: 'ciego',
-    label: 'Ciego',
-    icon: EyeOff,
-    description: 'Los jugadores no saben cuántos impostores hay',
   },
   {
     key: 'aliados',

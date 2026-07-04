@@ -8,6 +8,8 @@ export interface StartGameRequest {
   mode: string;
   difficulty: string;
   categories?: string[];
+  show_category_to_impostor?: boolean;
+  show_impostor_count?: boolean;
 }
 
 export async function startGame(

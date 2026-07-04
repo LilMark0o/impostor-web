@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Shield, Layers, EyeOff, Users, Shuffle } from 'lucide-react'
+import { Shield, Layers, Users, Shuffle } from 'lucide-react'
 import { CategorySelector } from './CategorySelector'
 import type { Mode, Difficulty, PlayerTokenOut } from '@/types'
 import { cn } from '@/lib/utils'
@@ -24,7 +24,6 @@ interface RondaPanelProps {
 const MODE_OPTIONS: { key: Mode; label: string; icon: React.ElementType }[] = [
   { key: 'clasico', label: 'Clásico', icon: Shield },
   { key: 'caos', label: 'Caos', icon: Layers },
-  { key: 'ciego', label: 'Ciego', icon: EyeOff },
   { key: 'aliados', label: 'Aliados', icon: Users },
   { key: 'espejo', label: 'Espejo', icon: Shuffle },
 ]

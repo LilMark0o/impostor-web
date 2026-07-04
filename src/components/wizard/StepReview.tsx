@@ -1,13 +1,16 @@
-import { Shield, Layers, EyeOff, Users, Shuffle, Target, UserX, Loader2, type LucideIcon } from 'lucide-react';
+import { Shield, Layers, EyeOff, Users, Shuffle, Target, UserX, Loader2, Dices, Flame, Smile, type LucideIcon } from 'lucide-react';
 import type { Mode, Difficulty, Player } from '@/types';
 import { MODE_LABELS, DIFFICULTY_LABELS } from '@/constants/labels';
 
 const MODE_ICONS: Record<Mode, LucideIcon> = {
-  clasico: Shield,
-  caos: Layers,
-  ciego: EyeOff,
-  aliados: Users,
-  espejo: Shuffle,
+  clasico:          Shield,
+  caos:             Layers,
+  aliados:          Users,
+  espejo:           Shuffle,
+  infiltrados:      EyeOff,
+  aleatorio:        Dices,
+  sin_impostores:   Smile,
+  todos_impostores: Flame,
 };
 
 function computeImpostors(playerCount: number, mode: Mode): string {

@@ -1,4 +1,13 @@
-export type Mode = 'clasico' | 'caos' | 'ciego' | 'aliados' | 'espejo';
+export type Mode =
+  | 'clasico'
+  | 'caos'
+  | 'aliados'
+  | 'espejo'
+  | 'infiltrados'
+  | 'aleatorio'
+  | 'sin_impostores'
+  | 'todos_impostores';
+// 'ciego' removed from UI type — kept in DB/backend only
 export type Difficulty = 'facil' | 'dificil' | 'brutal';
 
 export interface Player {
