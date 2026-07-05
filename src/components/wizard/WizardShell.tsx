@@ -66,7 +66,7 @@ export function WizardShell() {
       ? players
       : players.map((p) => ({ ...p, id: '' }));
     await start({ players: playersForApi, mode, difficulty, categories, show_category_to_impostor: showCategoryToImpostor, show_impostor_count: showImpostorCount }, token ?? '');
-  }, [players, mode, difficulty, categories, start, user, token]);
+  }, [players, mode, difficulty, categories, showCategoryToImpostor, showImpostorCount, start, user, token]);
 
   const goToStep1 = useCallback(() => setStep(1), []);
   const goToStep2 = useCallback(() => setStep(2), []);
@@ -128,7 +128,6 @@ export function WizardShell() {
         <div className="w-full max-w-2xl">
           <GameInProgress
             result={result}
-            mode={mode}
             difficulty={difficulty}
             onNewRound={handleNewRound}
           />

@@ -99,8 +99,29 @@ export function CategorySelector({ value, onChange, className }: CategorySelecto
 
       {expanded && (
         <div className="px-4 pb-4 flex flex-col gap-3 border-t border-stone-100">
+          {/* Todas / Ninguna shortcuts */}
+          {sysCats.length > 0 && (
+            <div className="flex items-center gap-3 pt-3">
+              <button
+                type="button"
+                onClick={() => { setSelectedSys(sysCats); notify(sysCats, customCats, sysCats); }}
+                className="text-xs font-medium text-amber-700 hover:text-amber-900 underline underline-offset-2 transition-colors"
+              >
+                Todas
+              </button>
+              <span className="text-stone-300 text-xs">·</span>
+              <button
+                type="button"
+                onClick={() => { setSelectedSys([]); notify([], customCats, sysCats); }}
+                className="text-xs font-medium text-stone-400 hover:text-stone-700 underline underline-offset-2 transition-colors"
+              >
+                Ninguna
+              </button>
+            </div>
+          )}
+
           {/* System category chips */}
-          <div className="flex flex-wrap gap-2 pt-3">
+          <div className="flex flex-wrap gap-2">
             {sysCats.map((cat) => {
               const selected = selectedSys.includes(cat)
               return (

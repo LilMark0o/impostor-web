@@ -1,6 +1,8 @@
 import type { ElementType } from 'react';
 import { Shield, Layers, Users, Shuffle, Eye, Dices } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
+import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
 import { CategorySelector } from '@/components/CategorySelector';
 import type { Mode, Difficulty } from '@/types';
 
@@ -144,32 +146,34 @@ export function StepMode({
               )}
               {isSelected && key === 'clasico' && (
                 <div
-                  className="flex items-center gap-2 mt-2"
+                  className="flex items-center gap-2 mt-3 pt-2 border-t border-stone-100"
                   onClick={(e) => e.stopPropagation()}
                 >
-                  <input
-                    type="checkbox"
-                    aria-label="Impostor ve la categoría"
+                  <Switch
+                    id="show-category"
                     checked={showCategoryToImpostor}
-                    onChange={(e) => onShowCategoryToImpostorChange?.(e.target.checked)}
+                    onCheckedChange={(v) => onShowCategoryToImpostorChange?.(v)}
                     onClick={(e) => e.stopPropagation()}
                   />
-                  <span className="text-sm text-stone-700">Impostor ve la categoría</span>
+                  <Label htmlFor="show-category" className="text-xs text-stone-600 cursor-pointer">
+                    Impostor ve la categoría
+                  </Label>
                 </div>
               )}
               {isSelected && key === 'caos' && (
                 <div
-                  className="flex items-center gap-2 mt-2"
+                  className="flex items-center gap-2 mt-3 pt-2 border-t border-stone-100"
                   onClick={(e) => e.stopPropagation()}
                 >
-                  <input
-                    type="checkbox"
-                    aria-label="Revelar número de impostores"
+                  <Switch
+                    id="show-impostor-count"
                     checked={showImpostorCount}
-                    onChange={(e) => onShowImpostorCountChange?.(e.target.checked)}
+                    onCheckedChange={(v) => onShowImpostorCountChange?.(v)}
                     onClick={(e) => e.stopPropagation()}
                   />
-                  <span className="text-sm text-stone-700">Revelar número de impostores</span>
+                  <Label htmlFor="show-impostor-count" className="text-xs text-stone-600 cursor-pointer">
+                    Revelar número de impostores
+                  </Label>
                 </div>
               )}
             </button>
