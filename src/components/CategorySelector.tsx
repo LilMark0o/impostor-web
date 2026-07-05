@@ -48,6 +48,8 @@ export function CategorySelector({ value, onChange, className }: CategorySelecto
   }
 
   function toggleSys(cat: string) {
+    const isLastOne = selectedSys.includes(cat) && selectedSys.length === 1 && customCats.length === 0
+    if (isLastOne) return // can't deselect the only remaining category
     const next = selectedSys.includes(cat)
       ? selectedSys.filter((c) => c !== cat)
       : [...selectedSys, cat]
@@ -112,8 +114,9 @@ export function CategorySelector({ value, onChange, className }: CategorySelecto
               <span className="text-stone-300 text-xs">·</span>
               <button
                 type="button"
+                disabled={customCats.length === 0}
                 onClick={() => { setSelectedSys([]); notify([], customCats, sysCats); }}
-                className="text-xs font-medium text-stone-400 hover:text-stone-700 underline underline-offset-2 transition-colors"
+                className="text-xs font-medium text-stone-400 underline underline-offset-2 transition-colors disabled:opacity-30 disabled:cursor-not-allowed enabled:hover:text-stone-700"
               >
                 Ninguna
               </button>
