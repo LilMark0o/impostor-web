@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { ChevronDown, ChevronRight, X } from 'lucide-react'
-import { getCategories } from '@/api/game'
+import { getCategoriesData, type CategoryPack } from '@/api/game'
 import { cn } from '@/lib/utils'
 
 interface CategorySelectorProps {
@@ -11,6 +11,8 @@ interface CategorySelectorProps {
 
 export function CategorySelector({ value, onChange, className }: CategorySelectorProps) {
   const [sysCats, setSysCats] = useState<string[]>([])
+  const [groups, setGroups] = useState<Record<string, string[]>>({})
+  const [packs, setPacks] = useState<Record<string, CategoryPack>>({})
   const [selectedSys, setSelectedSys] = useState<string[]>([])
   const [customCats, setCustomCats] = useState<string[]>([])
   const [customInput, setCustomInput] = useState('')
@@ -18,25 +20,25 @@ export function CategorySelector({ value, onChange, className }: CategorySelecto
   const initialized = useRef(false)
 
   useEffect(() => {
-    getCategories()
-      .then((cats) => {
-        setSysCats(cats)
+    getCategoriesData()
+      .then((data) => {
+        setSysCats(data.categories)
+        setGroups(data.groups)
+        setPacks(data.packs)
         if (!initialized.current) {
           initialized.current = true
           if (value.length === 0) {
-            setSelectedSys(cats)
+            setSelectedSys(data.categories)
             setCustomCats([])
           } else {
-            const sys = value.filter((c) => cats.includes(c))
-            const custom = value.filter((c) => !cats.includes(c))
-            setSelectedSys(sys.length > 0 ? sys : cats)
+            const sys = value.filter((c) => data.categories.includes(c))
+            const custom = value.filter((c) => !data.categories.includes(c))
+            setSelectedSys(sys.length > 0 ? sys : data.categories)
             setCustomCats(custom)
           }
         }
       })
-      .catch(() => {
-        // API unavailable — component shows empty chip grid, custom input still works
-      })
+      .catch(() => {})
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   function notify(sys: string[], custom: string[], allSys: string[]) {
@@ -49,12 +51,20 @@ export function CategorySelector({ value, onChange, className }: CategorySelecto
 
   function toggleSys(cat: string) {
     const isLastOne = selectedSys.includes(cat) && selectedSys.length === 1 && customCats.length === 0
-    if (isLastOne) return // can't deselect the only remaining category
+    if (isLastOne) return
     const next = selectedSys.includes(cat)
       ? selectedSys.filter((c) => c !== cat)
       : [...selectedSys, cat]
     setSelectedSys(next)
     notify(next, customCats, sysCats)
+  }
+
+  function applyPack(pack: CategoryPack) {
+    const packSys = pack.categories.filter((c) => sysCats.includes(c))
+    const packCustom = pack.categories.filter((c) => !sysCats.includes(c))
+    setSelectedSys(packSys)
+    setCustomCats(packCustom)
+    notify(packSys, packCustom, sysCats)
   }
 
   function addCustom() {
@@ -76,6 +86,9 @@ export function CategorySelector({ value, onChange, className }: CategorySelecto
   const label = allSelected
     ? 'todas'
     : `${selectedSys.length} de ${sysCats.length}${customCats.length > 0 ? ` + ${customCats.length} custom` : ''}`
+
+  const hasGroups = Object.keys(groups).length > 0
+  const hasPacks = Object.keys(packs).length > 0
 
   return (
     <div className={cn('rounded-lg border border-stone-200', className)}>
@@ -100,10 +113,42 @@ export function CategorySelector({ value, onChange, className }: CategorySelecto
       </button>
 
       {expanded && (
-        <div className="px-4 pb-4 flex flex-col gap-3 border-t border-stone-100">
+        <div className="px-4 pb-4 flex flex-col gap-4 border-t border-stone-100">
+
+          {/* Quick packs */}
+          {hasPacks && (
+            <div className="pt-3 flex flex-col gap-2">
+              <p className="text-xs font-semibold uppercase tracking-wider text-stone-400">
+                Packs rápidos
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {Object.entries(packs).map(([key, pack]) => {
+                  const isActive =
+                    pack.categories.length === selectedSys.length + customCats.length &&
+                    pack.categories.every((c) => selectedSys.includes(c) || customCats.includes(c))
+                  return (
+                    <button
+                      key={key}
+                      type="button"
+                      onClick={() => applyPack(pack)}
+                      className={cn(
+                        'px-3 py-1.5 rounded-full text-sm border transition-colors font-medium',
+                        isActive
+                          ? 'bg-amber-600 border-amber-600 text-white'
+                          : 'bg-white border-stone-200 text-stone-600 hover:border-amber-400 hover:text-amber-700',
+                      )}
+                    >
+                      {pack.emoji} {pack.label}
+                    </button>
+                  )
+                })}
+              </div>
+            </div>
+          )}
+
           {/* Todas / Ninguna shortcuts */}
           {sysCats.length > 0 && (
-            <div className="flex items-center gap-3 pt-3">
+            <div className="flex items-center gap-3">
               <button
                 type="button"
                 onClick={() => { setSelectedSys(sysCats); notify(sysCats, customCats, sysCats); }}
@@ -123,28 +168,59 @@ export function CategorySelector({ value, onChange, className }: CategorySelecto
             </div>
           )}
 
-          {/* System category chips */}
-          <div className="flex flex-wrap gap-2">
-            {sysCats.map((cat) => {
-              const selected = selectedSys.includes(cat)
-              return (
-                <button
-                  key={cat}
-                  type="button"
-                  onClick={() => toggleSys(cat)}
-                  aria-pressed={selected}
-                  className={cn(
-                    'px-3 py-1 rounded-full text-sm border transition-colors capitalize',
-                    selected
-                      ? 'bg-amber-50 border-amber-600 text-amber-800'
-                      : 'bg-white border-stone-200 text-stone-400 hover:bg-stone-50',
-                  )}
-                >
-                  {cat}
-                </button>
-              )
-            })}
-          </div>
+          {/* Grouped category chips */}
+          {hasGroups ? (
+            <div className="flex flex-col gap-3">
+              {Object.entries(groups).map(([groupName, cats]) => (
+                <div key={groupName} className="flex flex-col gap-1.5">
+                  <p className="text-xs font-semibold text-stone-400">{groupName}</p>
+                  <div className="flex flex-wrap gap-2">
+                    {cats.map((cat) => {
+                      const selected = selectedSys.includes(cat)
+                      return (
+                        <button
+                          key={cat}
+                          type="button"
+                          onClick={() => toggleSys(cat)}
+                          aria-pressed={selected}
+                          className={cn(
+                            'px-3 py-1 rounded-full text-sm border transition-colors capitalize',
+                            selected
+                              ? 'bg-amber-50 border-amber-600 text-amber-800'
+                              : 'bg-white border-stone-200 text-stone-400 hover:bg-stone-50',
+                          )}
+                        >
+                          {cat}
+                        </button>
+                      )
+                    })}
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="flex flex-wrap gap-2">
+              {sysCats.map((cat) => {
+                const selected = selectedSys.includes(cat)
+                return (
+                  <button
+                    key={cat}
+                    type="button"
+                    onClick={() => toggleSys(cat)}
+                    aria-pressed={selected}
+                    className={cn(
+                      'px-3 py-1 rounded-full text-sm border transition-colors capitalize',
+                      selected
+                        ? 'bg-amber-50 border-amber-600 text-amber-800'
+                        : 'bg-white border-stone-200 text-stone-400 hover:bg-stone-50',
+                    )}
+                  >
+                    {cat}
+                  </button>
+                )
+              })}
+            </div>
+          )}
 
           {/* Custom category chips */}
           {customCats.length > 0 && (

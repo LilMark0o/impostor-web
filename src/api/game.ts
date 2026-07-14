@@ -34,8 +34,29 @@ export async function startGame(
   return res.json();
 }
 
-export async function getCategories(): Promise<string[]> {
+export interface CategoryPack {
+  label: string
+  emoji: string
+  categories: string[]
+}
+
+export interface CategoriesData {
+  categories: string[]
+  groups: Record<string, string[]>
+  packs: Record<string, CategoryPack>
+}
+
+export async function getCategoriesData(): Promise<CategoriesData> {
   const res = await fetch(`${API_URL}/api/categories`);
   const data = await res.json();
+  return {
+    categories: data.categories ?? [],
+    groups: data.groups ?? {},
+    packs: data.packs ?? {},
+  };
+}
+
+export async function getCategories(): Promise<string[]> {
+  const data = await getCategoriesData();
   return data.categories;
 }
