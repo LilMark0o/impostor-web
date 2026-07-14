@@ -10,6 +10,7 @@ export interface StartGameRequest {
   categories?: string[];
   show_category_to_impostor?: boolean;
   show_impostor_count?: boolean;
+  exclude_words?: string[];
 }
 
 export async function startGame(

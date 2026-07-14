@@ -30,6 +30,7 @@ export interface StartGameResponse {
   failed: string[];
   session_id: string;
   players: PlayerTokenOut[];
+  word?: string;
 }
 
 export interface RevealState {

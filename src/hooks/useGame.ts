@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { startGame } from '../api/game';
 import type { StartGameRequest } from '../api/game';
 import type { StartGameResponse } from '../types';
-import { saveTokens, saveCategories } from '../lib/playerTokens';
+import { saveTokens, saveCategories, addSessionWord, getSessionWords } from '../lib/playerTokens';
 
 type GameState = 'idle' | 'loading' | 'result' | 'error';
 
@@ -15,9 +15,13 @@ export function useGame() {
     setState('loading');
     setError(null);
     try {
-      const res = await startGame(req, token);
+      // Inject session words so the backend avoids repeating them
+      const exclude_words = getSessionWords();
+      const res = await startGame({ ...req, exclude_words }, token);
       saveTokens(res.players);
       saveCategories(req.categories ?? []);
+      // Track the word used in this round
+      if (res.word) addSessionWord(res.word);
       setResult(res);
       setState('result');
     } catch (err) {

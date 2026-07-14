@@ -1,5 +1,6 @@
 const TOKENS_KEY = 'impostor_player_tokens'
 const CATEGORIES_KEY = 'impostor_categories'
+const SESSION_WORDS_KEY = 'impostor_session_words'
 
 export interface StoredToken {
   name: string
@@ -37,4 +38,24 @@ export function saveCategories(categories: string[]): void {
 
 export function clearStoredCategories(): void {
   localStorage.removeItem(CATEGORIES_KEY)
+}
+
+export function getSessionWords(): string[] {
+  try {
+    return JSON.parse(sessionStorage.getItem(SESSION_WORDS_KEY) ?? '[]')
+  } catch {
+    return []
+  }
+}
+
+export function addSessionWord(word: string): void {
+  if (!word) return
+  const current = getSessionWords()
+  if (!current.includes(word)) {
+    sessionStorage.setItem(SESSION_WORDS_KEY, JSON.stringify([...current, word]))
+  }
+}
+
+export function clearSessionWords(): void {
+  sessionStorage.removeItem(SESSION_WORDS_KEY)
 }
