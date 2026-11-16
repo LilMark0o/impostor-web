@@ -97,9 +97,23 @@ export function CardModal({ playerName, token, onClose }: CardModalProps) {
                   <>
                     <p className="text-red-400 text-xs font-bold uppercase tracking-widest">Tu rol</p>
                     <p className="text-white text-5xl font-black">Impostor</p>
-                    <p className="text-stone-400 text-sm text-center leading-relaxed mt-2">
-                      Los demás hablan de una categoría. Tú no sabes cuál. Disimula.
-                    </p>
+                    {data.hint ? (
+                      <>
+                        <div className="w-full border-t border-stone-700 pt-3 flex flex-col items-center gap-1">
+                          <p className="text-stone-500 text-xs uppercase tracking-widest">Tu pista</p>
+                          <p className="text-amber-300 text-sm text-center leading-relaxed">
+                            {data.hint}
+                          </p>
+                        </div>
+                        <p className="text-stone-500 text-xs text-center">
+                          No sabes la categoría. Disimula.
+                        </p>
+                      </>
+                    ) : (
+                      <p className="text-stone-400 text-sm text-center leading-relaxed mt-2">
+                        Los demás hablan de una categoría. Tú no sabes cuál. Disimula.
+                      </p>
+                    )}
                   </>
                 ) : (
                   <>

@@ -39,6 +39,7 @@ export interface RevealState {
   session_id?: string;
   is_impostor?: boolean;
   category?: string | null;
+  hint?: string | null;
 }
 
 export interface AuthUser {
