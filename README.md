@@ -10,6 +10,10 @@ or more can play without installing anything.
 > **Playable with zero API keys.** Login is optional; anonymous rounds still
 > work. No LLM key is needed — the words and hints live in the API.
 
+<p align="center">
+  <img src="docs/demo.gif" width="300" alt="Cada jugador voltea su carta en privado">
+</p>
+
 ## Quickstart
 
 Start the [API](../api/README.md) first, then:
