@@ -16,7 +16,7 @@ or more can play without installing anything.
 
 ## Quickstart
 
-Start the [API](../api/README.md) first, then:
+Start the [API](https://github.com/LilMark0o/impostor-api) first, then:
 
 ```bash
 npm install
